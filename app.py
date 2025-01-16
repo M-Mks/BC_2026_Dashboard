@@ -5,7 +5,7 @@ import plotly.express as px
 from dash.dependencies import Input, Output
 
 # Load the CSV file
-file_path = "dashboard\Copy_Rand_Quantitative_results.csv"  # Update with your CSV file path
+file_path = "Copy_Rand_Quantitative_results.csv"  # Update with your CSV file path
 df = pd.read_csv(file_path, sep=";")
 
 # Initialize the Dash app
