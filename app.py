@@ -1,6 +1,5 @@
+from dash import Dash, dcc, html
 import pandas as pd
-import dash
-from dash import dcc, html
 import plotly.express as px
 from dash.dependencies import Input, Output
 
@@ -9,7 +8,8 @@ file_path = "Copy_Rand_Quantitative_results.csv"  # Update with your CSV file pa
 df = pd.read_csv(file_path, sep=";")
 
 # Initialize the Dash app
-app = dash.Dash(__name__)
+app = Dash(__name__)
+server = app.server
 app.title = "Survey Results Dashboard"
 
 # Layout of the dashboard
