@@ -106,7 +106,7 @@ section_subtitles = {
     "Section 1: About the Respondent": "Professional and Organisational repartition of respondants",
     "Section 2: About your current use of Blue-Cloud": "Evaluation of Blue Cloud services on a scale of 1 to 4",
     "Section 3: About Blue-Cloud thematic contribution to EOSC": "As a Blue-Cloud stakeholder, what type of value, services and/or type of representation would you be looking for in EOSC? ",
-    "Section 4: About Blue-Cloud evolution as an incubator for the EU DTO": "Explore potential interests in new services.",
-    "Section 5: About Blue-Cloud as a contributor to the UN Ocean Decade": "bloublou", 
+    "Section 4: About Blue-Cloud evolution as an incubator for the EU DTO": "Classification of interest in potential new services.",
+    "Section 5: About Blue-Cloud as a contributor to the UN Ocean Decade": "", 
     # Add more sections and subtitles as needed
 }
