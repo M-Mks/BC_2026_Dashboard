@@ -1,6 +1,5 @@
 import matplotlib
 matplotlib.use('Agg')
-
 from dash import Dash, dcc, html
 import pandas as pd
 import plotly.express as px
@@ -10,29 +9,13 @@ import io
 import base64
 import matplotlib.pyplot as plt
 
+# Importing custom layout configurations from layouts.py
+from assets.helper_functions import create_pie_chart, create_multi_select_pie_chart, create_numeric_pie_chart, create_ordered_pie_chart
+from assets.layouts import custom_legend, DIV_STYLE, SECTION_LAYOUT, sections, section_subtitles
+
 # Load the CSV file
 file_path = "Copy_Rand_Quantitative_results.csv"  # Update with your CSV file path
 df = pd.read_csv(file_path, sep=";")
-
-# Custom legend mapping for specific columns
-custom_legend = {
-    "Professional Group": {
-        "A": "Marine (data) scientist and/or researcher",
-        "B": "IT programmer/software developer",
-        "C": "Business, infrastructure, or operations manager",
-        "D": "Public administration",
-        "E": "Other (please specify)",
-    },
-    "Organization Sector": {
-        "A": "Academia",
-        "B": "Research organisation",
-        "C": "Data and service providers",
-        "D": "Government or related policy organisations",
-        "E": "Blue Economy industry, including SMEs",
-        "F": "NGOs, including civil society & citizens",
-        "G": "Other (please specify)",
-    }
-}
 
 # Apply the legend replacements for specific columns
 for col, legend in custom_legend.items():
@@ -42,179 +25,51 @@ for col, legend in custom_legend.items():
 # Define custom words to omit from the word cloud
 custom_stopwords = set(STOPWORDS).union({"survey", "data", "result", "Data", "value", "Lake", "Blue", "Cloud", "EDITO", "user", "s"})  # Add/remove words as needed
 
-# Centralized configuration for graph styles
-
-GRAPH_LAYOUT = {
-    "title": {
-        "x": 0.5,  # Center the title horizontally
-        "xanchor": "center",  # Align the title to the center
-        "yanchor": "top",  # Place the title just below the top of the plot
-        "font": {"size": 24, "color": "#1f2a44", "family": "Helvetica, Arial, sans-serif"},  # More modern font and color
-        "pad": {"t": 20},  # Add some padding above the title for more breathing room
-    },
-    "legend": {
-        "font": {"size": 16, "color": "#4b4b4b"},  # Slightly lighter color for better legibility
-        "itemclick": "toggleothers",
-        "itemdoubleclick": "toggle",
-        "title_font_size": 18,
-        "itemwidth": 50,
-        "x": 0.5,  # Center the legend horizontally below the plot
-        "xanchor": "center",  # Align legend to the center
-        "y": -0.15,  # Position the legend below the graph
-        "yanchor": "top",  # Ensure the legend is positioned below the plot
-        "orientation": "h",  # Horizontal layout
-        "traceorder": "normal",  # Control the order in which legend items appear
-        "bgcolor": "rgba(255, 255, 255, 0.7)",  # Optional: Add a background color for better visibility
-        "bordercolor": "#ccc",  # Optional: Add a border color for the legend box
-        "borderwidth": 1,  # Optional: Add border width for clarity
-        "itemwidth": 30,  # Set a maximum width for legend items
-        "itemsizing": "constant",  # Keep consistent symbol sizing
-        "tracegroupgap": 5,  # Space between groups
-    },
-    "general": {
-        "template": "plotly",  # Switch to 'plotly' for a more vibrant, modern style with subtle effects
-        "autosize": True,
-        "margin": {"t": 20, "b": 5, "l": 20, "r": 20},  # Increased margins for better spacing
-        "plot_bgcolor": "#f7f7f7",  # Slightly lighter background for a softer feel
-        "paper_bgcolor": "#ffffff",  # White background for contrast
-        "xaxis": {
-            "showgrid": True,
-            "gridcolor": "#e0e0e0",  # Subtle gridlines
-            "zeroline": False,
-            "showline": True,  # Show axis lines for a cleaner look
-            "linecolor": "#ccc",  # Lighter axis line color
-            "ticks": "outside",  # Place ticks outside for better readability
-            "ticklen": 8,  # Increase tick length for visibility
-        },
-        "yaxis": {
-            "showgrid": True,
-            "gridcolor": "#e0e0e0",
-            "zeroline": False,
-            "showline": True,  # Show axis lines for a cleaner look
-            "linecolor": "#ccc",
-            "ticks": "outside",
-            "ticklen": 8,
-        },
-    },
-}
-
-# Graph div styling to enhance layout
-DIV_STYLE = {
-    "flex": "1 1 45%",  # Two graphs per row, each taking up 45% of the space
-    "padding": "10px",  # Padding around the graph for better layout
-    "boxSizing": "border-box",
-    "border": "1px solid #ecf0f1",  # Light border for a clean appearance
-    "borderRadius": "12px",  # Rounded corners for a modern touch
-    "backgroundColor": "#ffffff",  # White background for contrast
-    "boxShadow": "0px 4px 16px rgba(0, 0, 0, 0.1)",  # Slightly more pronounced shadow for depth
-    "transition": "all 0.3s ease-in-out",  # Smooth transition when hovering over elements
-}
-
-# Section layout to improve visual spacing and clarity
-SECTION_LAYOUT = {
-    "display": "flex",
-    "flexWrap": "wrap",
-    "padding": "10px",  # Padding for sections
-    "gap": "30px",  # Larger gap for more breathing room between graphs
-    "alignItems": "center",  # Vertically center the content in each section
-}
 # Initialize the Dash app
 app = Dash(__name__)
 server = app.server
 app.title = "Survey Results Dashboard"
 
-# Define the sections with corrected column indices
-sections = {
-    "Section 1: About the Respondent": [1, 2],  # Indices of columns B and C
-    "Section 2: About your current use of Blue-Cloud": [3, 4, 5, 6, 7, 8, 9, 10, 11],  # Columns C to N
-    "Section 3: About Blue-Cloud thematic contribution to EOSC": [12, 13, 14, 15, 16, 17, 18, 19, 20],  # Columns M to X
-    "Section 4: About Blue-Cloud evolution as an incubator for the EU DTO": [24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35],  # Columns Y to AJ
-    "Section 5: About Blue-Cloud as a contributor to the UN Ocean Decade": [36],  # Column AK
-}
-
-def create_graph_for_question(question, is_numeric=False):
-    # Debugging: print out the current question being processed
-    print(f"Creating graph for question: {question}")
+def create_graph_for_question(question, is_numeric=False, section=None):
+    print(f"Creating graph for question: {question}")  # Debugging
     
-    # For pie charts (custom columns for pie chart)
-    if question in [df.columns[1], df.columns[2], df.columns[3], df.columns[13], df.columns[32], df.columns[33], df.columns[34]]:
+    # For specific pie charts
+    if question in [df.columns[1], df.columns[2], df.columns[3]]:
         print(f"Generating pie chart for {question}")  # Debugging
-        fig = px.pie(df, names=question, title=f"{question}".replace("/", "<br>"))
-        fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r))  # Custom color scheme
-        fig.update_layout(
-            title=None,  # Centered title
-            legend=GRAPH_LAYOUT["legend"],  # Vertical legend to the right
-            **GRAPH_LAYOUT["general"],  # Apply general layout settings
-        )
-        # Create a custom title for the pie chart
-        title_html = html.Div(
-            f"{question}".replace("/", "<br>"),  # Custom title (replace '/' with a line break)
-            style={
-                'textAlign': 'center',
-                'fontSize': '24px',
-                'color': '#1f2a44',
-                'fontFamily': 'Helvetica, Arial, sans-serif',
-                'fontWeight': 'normal',
-                'marginBottom': '2px',  # Ensure spacing between title and graph
-            }
-        )
-        return html.Div(
-                children=[
-                    title_html, 
-                        dcc.Graph(figure=fig, style={"margin": "10px 0", "padding": "0", "display": "flex", "flexDirection": "column", "alignItems": "center"})
-                    ],
-                      # Correct placement of 'style'
-            )
-    
-    elif df[question].dtype in ["int64", "float64"] or is_numeric:
+        return create_pie_chart(df, question)
+        
+    # For numeric pie charts (non-Section 2)
+    if question in df.columns[3:10]:
         print(f"Generating numeric graph for {question}")  # Debugging
-        # Define value mapping and category order
-        value_mapping = {1: "Very Poor", 2: "Poor", 3: "Good", 4: "Very Good"}
-        category_order = ["Very Poor", "Poor", "Good", "Very Good"]
-
-        # Map the numeric values to their respective labels
-        value_counts = df[question].map(value_mapping).value_counts()  # Directly map and count
-        value_counts = value_counts.reindex(category_order, fill_value=0).reset_index()  # Ensure order
-        value_counts.columns = ["Value", "Count"]  # Rename columns for Plotly
-        
-        # Create pie chart
-        fig = px.pie(
-            value_counts,
-            names="Value",
-            values="Count",
-            title=None,
-            color="Value",
-            color_discrete_sequence=px.colors.sequential.Blues_r,
-            category_orders={"Value": category_order},  # Ensure legend order
-        )
-        fig.update_layout(
-            title=None,
-            legend=GRAPH_LAYOUT["legend"],
-            **GRAPH_LAYOUT["general"],
-        )
-        # Create a custom title for the numeric graph
-        title_html = html.Div(
-            f"{question}".replace("/", "<br>"),
-            style={
-                'textAlign': 'center',
-                'fontSize': '24px',
-                'color': '#1f2a44',
-                'fontFamily': 'Helvetica, Arial, sans-serif',
-                'fontWeight': 'normal',
-                'marginBottom': '2px',  # Ensure spacing between title and graph
-            }
-        )
-        
-        # Return the title and the graph together
-        return html.Div(
-            children=[title_html, dcc.Graph(figure=fig, style={"width": "100%", "height": "100%"})],  # Ensure the container has the same style as the graphs
-        )
-
-    elif df[question].dtype == "object":
-        print(f"Generating wordcloud for {question}")  # Debugging
-        # Wordcloud generation for textual data
+        return create_numeric_pie_chart(df, question, value_mapping={
+            1: "Very Poor", 2: "Poor", 3: "Good", 4: "Very Good"
+        }, category_order=["Very Poor", "Poor", "Good", "Very Good"])
+    
+    # For multi-select pie chart in a specific section
+    if  question in [df.columns[13]]:
+        print(f"Generating multi-select pie chart for {question} in {section}")  # Debugging
+        return create_multi_select_pie_chart(df, question)
+    
+    # For specific ordered pie charts
+    if question in [df.columns[32], df.columns[33], df.columns[34]]:
+        print(f"Generating ordered pie chart for {question}")  # Debugging
+        return create_ordered_pie_chart(df, question, category_order=[
+            "I fully disagree", "I slightly disagree", "I slightly agree", "I fully agree"
+        ])
+    
+    # For numeric pie charts with a different value mapping
+    if is_numeric:
+        print(f"Generating numeric graph for {question}")  # Debugging
+        return create_numeric_pie_chart(df, question, value_mapping={
+            1: "Not Interested", 2: "Somewhat interested", 3: "Interested", 4: "Essential"
+        }, category_order=["Not Interested", "Somewhat interested", "Interested", "Essential"])
+    
+    # For word clouds
+    if df[question].dtype == "object":
+        print(f"Generating word cloud for {question}")  # Debugging
         return generate_wordcloud_for_question(question)
-
+    
+    # Default fallback
     return html.Div(f"No graph or word cloud for {question} - unsupported data type.")
     
 def generate_wordcloud_for_question(question):
@@ -250,7 +105,7 @@ def generate_wordcloud_for_question(question):
             question,
             style={
                 'textAlign': 'center',
-                'fontSize': '24px',
+                'fontSize': '20px',
                 'color': '#1f2a44',
                 'fontFamily': 'Helvetica, Arial, sans-serif',
                 'fontWeight': 'normal',
@@ -322,12 +177,14 @@ app.layout = html.Div(
                     label=section,
                     value=section,
                     children=[
-                        # Add custom subtitle for each section
-                        html.H2(f"Subtitle for {section}", style={"textAlign": "center", "fontSize": "20px", "color": "#34495e"}),  # Custom subtitle
+                        # Use the subtitle dictionary to fetch a custom subtitle for each section
+                        html.H2(
+                            section_subtitles.get(section, "Explore this section for detailed insights."),  # Default subtitle if not found
+                            style={"textAlign": "center", "fontSize": "20px", "color": "#34495e"}
+                        ),
                         html.Div(
                             id=f"graphs-{section}",
                             style=SECTION_LAYOUT if section != "Section 1: About the Respondent" else {},  # Remove SECTION_LAYOUT for Section 1
-                            
                         ),
                     ]
                 ) for section in sections
