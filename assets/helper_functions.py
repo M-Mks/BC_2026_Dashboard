@@ -22,8 +22,8 @@ def create_multi_select_pie_chart(df, question):
     options = df[question].dropna().str.split(",").explode().str.strip()
     unique_options = sorted(options.unique())
     option_counts = pd.DataFrame({
-        "Option": unique_options,
-        "Count": [options.tolist().count(opt) for opt in unique_options]
+        "b": unique_options,
+        "c": [options.tolist().count(opt) for opt in unique_options]
     })
     fig = px.pie(
         option_counts, names="Option", values="Count", 
