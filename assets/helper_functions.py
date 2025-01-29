@@ -57,10 +57,13 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order):
     value_counts = df[question].map(value_mapping).value_counts()
     value_counts = value_counts.reindex(category_order, fill_value=0).reset_index()
     value_counts.columns = ["Value", "Count"]
+    
     fig = px.pie(
-        value_counts, names="Value", values="Count", 
-        color="Value", 
-        category_orders={"Value": category_order}
+        value_counts, 
+        names=value_counts.columns[0],  # Use the first column dynamically
+        values=value_counts.columns[1],  # Use the second column dynamically
+        color=value_counts.columns[0], 
+        category_orders={value_counts.columns[0]: category_order}
     )
     fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value")
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
