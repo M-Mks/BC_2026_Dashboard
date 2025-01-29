@@ -3,7 +3,7 @@ import pandas as pd
 from dash import html, dcc
 from plotly.colors import sample_colorscale
 from assets.layouts import GRAPH_LAYOUT
-
+#&
 
 def create_pie_chart(df, question):
     fig = px.pie(df, names=question, title=f"{question}")
