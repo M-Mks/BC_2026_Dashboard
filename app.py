@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 # Importing custom layout configurations from layouts.py
 from assets.helper_functions import create_pie_chart, create_multi_select_pie_chart, create_numeric_pie_chart, create_ordered_pie_chart
-from assets.layouts import custom_legend, DIV_STYLE, SECTION_LAYOUT, sections, section_subtitles
+from assets.layouts import custom_legend, DIV_STYLE, SECTION_LAYOUT, sections, section_subtitles, COUNTER_STYLE
 
 # Load the CSV file
 file_path = "Copy_Rand_Quantitative_results.csv"  # Update with your CSV file path
@@ -24,6 +24,8 @@ for col, legend in custom_legend.items():
 
 # Define custom words to omit from the word cloud
 custom_stopwords = set(STOPWORDS).union({"survey", "data", "result", "Data", "value", "Lake", "Blue", "Cloud", "EDITO", "user", "s"})  # Add/remove words as needed
+respondent_count = df.shape[0]  # Number of rows in the DataFrame
+
 
 # Initialize the Dash app
 app = Dash(__name__)
@@ -183,6 +185,11 @@ app.layout = html.Div(
                             style={"textAlign": "center", "fontSize": "20px", "color": "#34495e"}
                         ),
                         html.Div(
+                            f"Respondent Count: {respondent_count}",
+                            style=COUNTER_STYLE,
+                        ) if section == "Section 1: About the Respondent" else None,
+                            
+                        html.Div(
                             id=f"graphs-{section}",
                             style=SECTION_LAYOUT if section != "Section 1: About the Respondent" else {},  # Remove SECTION_LAYOUT for Section 1
                         ),
@@ -219,8 +226,7 @@ def update_graphs_by_section(selected_section):
         )
         for section in sections
     ]
-
-
+    
 # Run the app
 if __name__ == "__main__":
     app.run_server(debug=True)

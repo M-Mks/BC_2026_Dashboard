@@ -28,8 +28,8 @@ GRAPH_LAYOUT = {
     },
     "legend": {
         "font": {"size": 16, "color": "#4b4b4b"},  # Slightly lighter color for better legibility
-        "itemclick": "toggleothers",
-        "itemdoubleclick": "toggle",
+        "itemclick": False,
+        "itemdoubleclick": False,
         "title_font_size": 18,
         "itemwidth": 50,
         "x": 0.5,  # Center the legend horizontally below the plot
@@ -82,6 +82,21 @@ DIV_STYLE = {
     "backgroundColor": "#ffffff",  # White background for contrast
     "boxShadow": "0px 4px 16px rgba(0, 0, 0, 0.1)",  # Slightly more pronounced shadow for depth
     "transition": "all 0.3s ease-in-out",  # Smooth transition when hovering over elements
+}
+
+COUNTER_STYLE = {
+    "textAlign": "center",
+    "fontSize": "18px",
+    "color": "#2c3e50",
+    "marginBottom": "10px",
+    "width": "20%",  # Box takes up 20% of the window width
+    "marginLeft": "auto",  # Automatically center horizontally
+    "marginRight": "auto",  # Automatically center horizontally
+    "backgroundColor": "#ffffff",  # Light grey background
+    "padding": "10px",  # Add some padding for better appearance
+    "borderRadius": "12px",  # Add rounded corners for aesthetics
+    "boxShadow": "0px 4px 16px rgba(0, 0, 0, 0.1)",  # Slightly more pronounced shadow for depth
+    "transition": "all 0.3s ease-in-out",
 }
 
 # Section layout to isual spacing and claritimprove vy

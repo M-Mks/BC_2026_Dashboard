@@ -6,7 +6,7 @@ from assets.layouts import GRAPH_LAYOUT
 
 def create_pie_chart(df, question):
     fig = px.pie(df, names=question, title=f"{question}".replace("/", "<br>"))
-    fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r))
+    fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value")
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
 
     title_html = html.Div(
@@ -33,6 +33,7 @@ def create_multi_select_pie_chart(df, question):
         },
         category_orders={"Option": unique_options}
     )
+   
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
     
     title_html = html.Div(
@@ -73,6 +74,7 @@ def create_ordered_pie_chart(df, question, category_order):
         color="Value", color_discrete_sequence=px.colors.sequential.Blues_r, 
         category_orders={"Value": category_order}
     )
+    fig.update_traces(hoverinfo="label+value")
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
     
     title_html = html.Div(
