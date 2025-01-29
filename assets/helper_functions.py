@@ -46,24 +46,29 @@ def create_multi_select_pie_chart(df, question):
     return html.Div([title_html, dcc.Graph(figure=fig)])
 
 def create_numeric_pie_chart(df, question, value_mapping, category_order):
-    value_counts = df[question].map(value_mapping).dropna().value_counts()
-    value_counts = value_counts.reindex(category_order, fill_value=0).reset_index()
-    value_counts.columns = ["Value", "Count"]
+    # Apply value mapping and drop NaN values
+    mapped_values = df[question].map(value_mapping).dropna()
+    
+    # Compute value counts while keeping the original column name
+    value_counts = mapped_values.value_counts().reindex(category_order, fill_value=0)
+
+    # Create the pie chart using the original column name
     fig = px.pie(
-        value_counts, names="Value", values="Count", 
-        color="Value", color_discrete_sequence=px.colors.sequential.Blues_r, 
-        category_orders={"Value": category_order}
+        names=value_counts.index, 
+        values=value_counts.values,
+        color=value_counts.index, 
+        color_discrete_sequence=px.colors.sequential.Blues_r,
+        category_orders={question: category_order}  # Use the original question name
     )
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
-    
-    title_html = html.Div(
-        f"{question}",
-        style={
+
+    return html.Div([
+        html.Div(f"{question}", style={
             'textAlign': 'center', 'fontSize': '20px', 'color': '#1f2a44',
             'fontFamily': 'Helvetica, Arial, sans-serif', 'fontWeight': 'normal', 'marginBottom': '2px'
-        }
-    )
-    return html.Div([title_html, dcc.Graph(figure=fig)])
+        }),
+        dcc.Graph(figure=fig)
+    ])
 
 def create_ordered_pie_chart(df, question, category_order):
     value_counts = df[question].value_counts()
