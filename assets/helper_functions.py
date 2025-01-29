@@ -54,20 +54,28 @@ def create_multi_select_histogram(df, question):
     return html.Div([title_html, dcc.Graph(figure=fig)])
 
 def create_numeric_pie_chart(df, question, value_mapping, category_order):
-    value_counts = df[question].map(value_mapping).value_counts()
-    value_counts = value_counts.reindex(category_order, fill_value=0).reset_index()
-    value_counts.columns = ["a", "b"]
+    # Map the values using the value_mapping and ensure missing values are handled
+    mapped_values = df[question].map(value_mapping).fillna("Unknown")
+
+    # Calculate the value counts of the mapped values
+    value_counts = mapped_values.value_counts()
     
+    # Reindex the result to ensure all categories from category_order are present (even with zero counts)
+    value_counts = value_counts.reindex(category_order, fill_value=0)
+
+    # Create the pie chart with the mapped values
     fig = px.pie(
-        value_counts, 
-        names=value_counts.columns[0],  # Use the first column dynamically
-        values=value_counts.columns[1],  # Use the second column dynamically
-        color=value_counts.columns[0], 
-        category_orders={value_counts.columns[0]: category_order}
+        names=value_counts.index,  # Use the categories (index) directly
+        values=value_counts.values,  # Use the counts
+        color=value_counts.index,  # Color by category name
+        category_orders={question: value_counts}  # Set category order in the chart
     )
+    
+    # Update trace style (optional)
     fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value")
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
-    
+
+    # Create a title for the chart
     title_html = html.Div(
         f"{question}",
         style={
@@ -75,6 +83,7 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order):
             'fontFamily': 'Helvetica, Arial, sans-serif', 'fontWeight': 'normal', 'marginBottom': '2px'
         }
     )
+    
     return html.Div([title_html, dcc.Graph(figure=fig)])
 
 def create_ordered_pie_chart(df, question, category_order):

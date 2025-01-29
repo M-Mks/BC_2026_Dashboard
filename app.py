@@ -41,7 +41,7 @@ def create_graph_for_question(question, is_numeric=False, section=None):
         return create_pie_chart(df, question)
         
     # For numeric pie charts (non-Section 2)
-    if question in df.columns[3:10]:
+    if question in df.columns[4:10]:
         print(f"Generating numeric graph for {question}")  # Debugging
         return create_numeric_pie_chart(df, question, value_mapping={
             1: "Very Poor", 2: "Poor", 3: "Good", 4: "Very Good"
