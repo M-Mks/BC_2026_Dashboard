@@ -61,13 +61,13 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order):
     mapped_values = pd.Categorical(mapped_values, categories=category_order, ordered=True)
     # Create the pie chart with the mapped values
     value_counts = mapped_values.value_counts()
-    value_counts.columns = ["Value", "Count"]
+    
     
     fig = px.pie(
         names=value_counts.index,  # Use the categories (index) directly
         values=value_counts.values,  # Use the counts
         color=value_counts.index,  # Color by category name
-        category_orders={'Value': category_order}
+        category_orders={question: category_order}
         )
     
     # Update trace style (optional)
@@ -89,17 +89,19 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order):
 def create_ordered_pie_chart(df, question, category_order):
     value_counts = df[question].value_counts()
     value_counts = value_counts.reindex(category_order, fill_value=0).reset_index()
-    value_counts.columns = ["Value", "Count"]
+    
     fig = px.pie(
-        value_counts, names="Value", values="Count", 
-        color="Value", 
-        category_orders={"Value": category_order}
+        value_counts, 
+        names=value_counts.index, 
+        values=value_counts.values, 
+        color=value_counts.index, 
+        category_orders={question: category_order}
     )
     fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value")
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
     
     title_html = html.Div(
-        f"{question}".replace("/", "<br>"),
+        f"{question}",
         style={
             'textAlign': 'center', 'fontSize': '20px', 'color': '#1f2a44',
             'fontFamily': 'Helvetica, Arial, sans-serif', 'fontWeight': 'normal', 'marginBottom': '2px'
