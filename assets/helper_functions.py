@@ -5,12 +5,12 @@ import matplotlib.pyplot as plt
 from assets.layouts import GRAPH_LAYOUT
 
 def create_pie_chart(df, question):
-    fig = px.pie(df, names=question, title=f"{question}".replace("/", "<br>"))
+    fig = px.pie(df, names=question, title=f"{question}")
     fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value")
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
 
     title_html = html.Div(
-        f"{question}".replace("/", "<br>"),
+        f"{question}",
         style={
             'textAlign': 'center', 'fontSize': '20px', 'color': '#1f2a44',
             'fontFamily': 'Helvetica, Arial, sans-serif', 'fontWeight': 'normal', 'marginBottom': '2px'
@@ -37,7 +37,7 @@ def create_multi_select_pie_chart(df, question):
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
     
     title_html = html.Div(
-        f"{question}".replace("/", "<br>"),
+        f"{question}",
         style={
             'textAlign': 'center', 'fontSize': '20px', 'color': '#1f2a44',
             'fontFamily': 'Helvetica, Arial, sans-serif', 'fontWeight': 'normal', 'marginBottom': '2px'
@@ -46,7 +46,7 @@ def create_multi_select_pie_chart(df, question):
     return html.Div([title_html, dcc.Graph(figure=fig)])
 
 def create_numeric_pie_chart(df, question, value_mapping, category_order):
-    value_counts = df[question].map(value_mapping).value_counts()
+    value_counts = df[question].map(value_mapping).dropna().value_counts()
     value_counts = value_counts.reindex(category_order, fill_value=0).reset_index()
     value_counts.columns = ["Value", "Count"]
     fig = px.pie(
@@ -57,7 +57,7 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order):
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
     
     title_html = html.Div(
-        f"{question}".replace("/", "<br>"),
+        f"{question}",
         style={
             'textAlign': 'center', 'fontSize': '20px', 'color': '#1f2a44',
             'fontFamily': 'Helvetica, Arial, sans-serif', 'fontWeight': 'normal', 'marginBottom': '2px'
@@ -78,7 +78,7 @@ def create_ordered_pie_chart(df, question, category_order):
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
     
     title_html = html.Div(
-        f"{question}".replace("/", "<br>"),
+        f"{question}",
         style={
             'textAlign': 'center', 'fontSize': '20px', 'color': '#1f2a44',
             'fontFamily': 'Helvetica, Arial, sans-serif', 'fontWeight': 'normal', 'marginBottom': '2px'

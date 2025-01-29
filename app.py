@@ -15,7 +15,7 @@ from assets.layouts import custom_legend, DIV_STYLE, SECTION_LAYOUT, sections, s
 
 # Load the CSV file
 file_path = "Copy_Rand_Quantitative_results.csv"  # Update with your CSV file path
-df = pd.read_csv(file_path, sep=";")
+df = pd.read_csv(file_path, sep=";", encoding="utf-8")
 
 # Apply the legend replacements for specific columns
 for col, legend in custom_legend.items():
