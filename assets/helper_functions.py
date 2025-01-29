@@ -56,24 +56,24 @@ def create_multi_select_histogram(df, question):
 def create_numeric_pie_chart(df, question, value_mapping, category_order):
     # Map the values using the value_mapping and ensure missing values are handled
     mapped_values = df[question].map(value_mapping).fillna("Unknown")
-
+       
     # Calculate the value counts of the mapped values
-    value_counts = mapped_values.value_counts()
-    
-    # Reindex the result to ensure all categories from category_order are present (even with zero counts)
-    value_counts = value_counts.reindex(category_order, fill_value=0)
-
+    mapped_values = pd.Categorical(mapped_values, categories=category_order, ordered=True)
     # Create the pie chart with the mapped values
+    value_counts = mapped_values.value_counts()
+    value_counts.columns = ["Value", "Count"]
+    
     fig = px.pie(
         names=value_counts.index,  # Use the categories (index) directly
         values=value_counts.values,  # Use the counts
         color=value_counts.index,  # Color by category name
-        category_orders={category_order}  # Set category order in the chart
-    )
+        category_orders={'Value': category_order}
+        )
     
     # Update trace style (optional)
     fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value")
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
+    
 
     # Create a title for the chart
     title_html = html.Div(

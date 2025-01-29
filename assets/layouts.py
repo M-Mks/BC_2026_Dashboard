@@ -43,7 +43,14 @@ GRAPH_LAYOUT = {
         "itemwidth": 30,  # Set a maximum width for legend items
         "itemsizing": "constant",  # Keep consistent symbol sizing
         "tracegroupgap": 10,  # Space between groups
-    },
+        "traceorder": "normal"
+        },
+    "legend_labels": {
+        1: "Very Poor",
+        2: "Poor",
+        3: "Good",
+        4: "Very Good",
+    },   
     "general": {
         "template": "plotly",  # Switch to 'plotly' for a more vibrant, modern style with subtle effects
         "autosize": True,
@@ -122,5 +129,4 @@ section_subtitles = {
     "Section 3: About Blue-Cloud thematic contribution to EOSC": "As a Blue-Cloud stakeholder, what type of value, services and/or type of representation would you be looking for in EOSC? ",
     "Section 4: About Blue-Cloud evolution as an incubator for the EU DTO": "Classification of interest in potential new services.",
     "Section 5: About Blue-Cloud as a contributor to the UN Ocean Decade": "", 
-    # Add more sections and subtitles as needed
 }
