@@ -37,7 +37,6 @@ GRAPH_LAYOUT = {
         "y": -0.15,  # Position the legend below the graph
         "yanchor": "top",  # Ensure the legend is positioned below the plot
         "orientation": "h",  # Horizontal layout
-        "traceorder": "normal",  # Control the order in which legend items appear
         "bgcolor": "rgba(255, 255, 255, 0.7)",  # Optional: Add a background color for better visibility
         "bordercolor": "#ccc",  # Optional: Add a border color for the legend box
         "borderwidth": 1,  # Optional: Add border width for clarity

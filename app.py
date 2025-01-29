@@ -10,7 +10,7 @@ import base64
 import matplotlib.pyplot as plt
 
 # Importing custom layout configurations from layouts.py
-from assets.helper_functions import create_pie_chart, create_multi_select_pie_chart, create_numeric_pie_chart, create_ordered_pie_chart
+from assets.helper_functions import create_pie_chart, create_multi_select_histogram, create_numeric_pie_chart, create_ordered_pie_chart
 from assets.layouts import custom_legend, DIV_STYLE, SECTION_LAYOUT, sections, section_subtitles, COUNTER_STYLE
 
 # Load the CSV file
@@ -50,7 +50,7 @@ def create_graph_for_question(question, is_numeric=False, section=None):
     # For multi-select pie chart in a specific section
     if  question in [df.columns[13]]:
         print(f"Generating multi-select pie chart for {question} in {section}")  # Debugging
-        return create_multi_select_pie_chart(df, question)
+        return create_multi_select_histogram(df, question)
     
     # For specific ordered pie charts
     if question in [df.columns[32], df.columns[33], df.columns[34]]:
