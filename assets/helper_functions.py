@@ -88,7 +88,10 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order):
 
 def create_ordered_pie_chart(df, question, category_order):
     value_counts = df[question].value_counts()
-    value_counts = value_counts.reindex(category_order, fill_value=0).reset_index()
+    
+    print(value_counts)
+    print(value_counts.shape)
+    print(value_counts.head())
     
     fig = px.pie(
         value_counts, 
