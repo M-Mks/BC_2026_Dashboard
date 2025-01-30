@@ -44,7 +44,12 @@ def create_graph_for_question(question, is_numeric=False, section=None):
         #print(f"Generating numeric graph for {question}")  # Debugging
         return create_numeric_pie_chart(df, question, value_mapping={
             1: "Very Poor", 2: "Poor", 3: "Good", 4: "Very Good"
-        }, category_order=["Very Poor", "Poor", "Good", "Very Good"])
+        }, category_order=["Very Poor", "Poor", "Good", "Very Good"], color_mapping = {
+        "Very Poor": "#d73027",
+        "Poor": "#fc8d59",       
+        "Good": "#fee08b",      
+        "Very Good": "#1a9850"  
+    })
     
     # For multi-select pie chart in a specific section
     if  question in [df.columns[13]]:
@@ -53,18 +58,16 @@ def create_graph_for_question(question, is_numeric=False, section=None):
     
     # For specific ordered pie charts
     if question in [df.columns[32], df.columns[33], df.columns[34]]:
-        #print(f"Generating ordered pie chart for {question}")  # Debugging
-        return create_ordered_pie_chart(df, question, category_order=[
-            "I fully disagree", "I slightly disagree", "I slightly agree", "I fully agree"
-        ])
+        return create_ordered_pie_chart(df, question, category_order=["I fully disagree", "I slightly disagree", "I slightly agree", "I fully agree"])
     
     # For numeric pie charts with a different value mapping
     if is_numeric:
         #print(f"Generating numeric graph for {question}")  # Debugging
-        return create_numeric_pie_chart(df, question, value_mapping={
-            1: "Not Interested", 2: "Somewhat interested", 3: "Interested", 4: "Essential"
-        }, category_order=["Not Interested", "Somewhat interested", "Interested", "Essential"])
-    
+        return create_numeric_pie_chart(df, question, 
+                                        value_mapping={1: "Not Interested", 2: "Somewhat interested", 3: "Interested", 4: "Essential"}, 
+                                        category_order=["Not Interested", "Somewhat interested", "Interested", "Essential"], 
+                                        color_mapping = {"Not Interested": "#d73027", "Somewhat interested":"#fc8d59", "Interested":"#fee08b", "Essential":"#1a9850"})
+
     # For word clouds
     if df[question].dtype == "object":
         #print(f"Generating word cloud for {question}")  # Debugging

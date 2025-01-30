@@ -6,8 +6,19 @@ from assets.layouts import GRAPH_LAYOUT
 
 
 def create_pie_chart(df, question):
-    fig = px.pie(df, names=question, title=f"{question}")
-    fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value")
+        # Get unique values from the column
+    unique_labels = df[question].dropna().unique()
+
+    # Define colors: Red-Green for Yes/No, otherwise Sequential Blue
+    if set(unique_labels) == {"Yes", "No"}:
+        color_mapping = {"Yes": "#1a9850", "No": "#d73027"}  # Green for Yes, Red for No
+        fig = px.pie(df, names=question, title=f"{question}", color=question, color_discrete_map=color_mapping)
+    else:
+        fig = px.pie(df, names=question, title=f"{question}")
+        fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r))
+
+    # General layout updates
+    fig.update_traces(hoverinfo="name+value")
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
 
     title_html = html.Div(
@@ -19,7 +30,8 @@ def create_pie_chart(df, question):
     )
     return html.Div([title_html, dcc.Graph(figure=fig)])
 
-def create_numeric_pie_chart(df, question, value_mapping, category_order):
+def create_numeric_pie_chart(df, question, value_mapping, category_order,color_mapping):
+    
     # Map the values using the value_mapping and handle missing values
     mapped_pie = df[question].map(value_mapping).fillna("Unknown")
     
@@ -28,17 +40,18 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order):
 
     vc[category_column] = pd.Categorical(vc[category_column], categories=category_order, ordered=True)
     vc = vc.sort_values(by=category_column)
-
+    
     # Create the pie chart
     fig = px.pie(
         vc,
         names=category_column,  # Use extracted column names
         values=value_column,
-        color=category_column,  
+        color=category_column,
+        color_discrete_map = color_mapping
     )
     
     # Update trace style
-    fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value", sort = False)
+    fig.update_traces(hoverinfo="name+value", sort = False)
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
     
     # Create a title for the chart
@@ -62,7 +75,6 @@ def create_multi_select_histogram(df, question):
             
     fig = px.bar(hist_counts, x="Answers", y="Counts")
     
-    print(hist_counts)
     fig.update_traces(marker_color=sample_colorscale("RdYlGn", hist_counts["Counts"] / hist_counts["Counts"].max())) 
        
     fig.update_layout(
@@ -90,16 +102,23 @@ def create_ordered_pie_chart(df, question, category_order):
 
     ord_values[cat_c] = pd.Categorical(ord_values[cat_c], categories=category_order, ordered=True)
     ord_values = ord_values.sort_values(by=cat_c)
-
-    # Create the pie chart
+    print(ord_values)
+    
+    color_mapping = {"I fully disagree": "#d73027",
+                    "I slightly disagree":"#fc8d59", 
+                    "I slightly agree":"#fee08b", 
+                    "I fully agree":"#1a9850"}
+    
+# Create the pie chart
     fig = px.pie(
         ord_values,  
         names=cat_c,  # Use the column name directly
         values=v_c,
         color=cat_c,
+        color_discrete_map = color_mapping
     )
     
-    fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value", sort = False)
+    fig.update_traces(hoverinfo="name+value", sort = False)
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
     
     title_html = html.Div(

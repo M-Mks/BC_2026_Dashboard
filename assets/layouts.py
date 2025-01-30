@@ -45,12 +45,7 @@ GRAPH_LAYOUT = {
         "tracegroupgap": 10,  # Space between groups
         "traceorder": "normal"
         },
-    "legend_labels": {
-        1: "Very Poor",
-        2: "Poor",
-        3: "Good",
-        4: "Very Good",
-    },   
+       
     "general": {
         "template": "plotly",  # Switch to 'plotly' for a more vibrant, modern style with subtle effects
         "autosize": True,
