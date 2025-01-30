@@ -20,20 +20,20 @@ def create_pie_chart(df, question):
     return html.Div([title_html, dcc.Graph(figure=fig)])
 
 def create_multi_select_histogram(df, question):
-    options = df[question].dropna().str.split(",").explode().str.strip()
-    unique_options = sorted(options.unique())
-    option_counts = pd.DataFrame({
-        "Option": unique_options,
-        "Count": [options.tolist().count(opt) for opt in unique_options]
+    hist_df = df[question].dropna().str.split(",").explode().str.strip()
+    unique_hist = sorted(hist_df.unique())
+    hist_counts = pd.DataFrame({
+        "Option": unique_hist,
+        "Count": [hist_df.tolist().count(opt) for opt in unique_hist]
     })
-    
+    print(unique_hist)
     fig = px.bar(
-        option_counts, x="Option", y="Count", 
+        hist_counts, x="Option", y="Count", 
         color="Option", 
-        category_orders={"Option": unique_options}
+        category_orders={"Option": unique_hist}
     )
-    print(option_counts["Count"] / option_counts["Count"].max())
-    fig.update_traces(marker_color=sample_colorscale("RdYlGn", option_counts["Count"] / option_counts["Count"].max()))
+    print(hist_counts["Count"] / hist_counts["Count"].max())
+    fig.update_traces(marker_color=sample_colorscale("RdYlGn", hist_counts["Count"] / hist_counts["Count"].max()))
     
     fig.update_layout(
         title=None, 
@@ -54,22 +54,23 @@ def create_multi_select_histogram(df, question):
     return html.Div([title_html, dcc.Graph(figure=fig)])
 
 def create_numeric_pie_chart(df, question, value_mapping, category_order):
-    # Map the values using the value_mapping and ensure missing values are handled
-    mapped_values = df[question].map(value_mapping).fillna("Unknown")
-       
-    # Calculate the value counts of the mapped values
-    mapped_values = pd.Categorical(mapped_values, categories=category_order, ordered=True)
-    # Create the pie chart with the mapped values
-    value_counts = mapped_values.value_counts()
+    # Map the values using the value_mapping and handle missing values
+    mapped_pie = df[question].map(value_mapping).fillna("Unknown")
     
-    
+    # Count occurrences of each category
+    vc = mapped_pie.value_counts().reset_index()
+    vc.columns = ["option", "Count"]  # Rename for clarity
+
+    print(vc)  # Debugging
+
+    # Create the pie chart
     fig = px.pie(
-        names=value_counts.index,  # Use the categories (index) directly
-        values=value_counts.values,  # Use the counts
-        color=value_counts.index,  # Color by category name
-        category_orders={question: category_order}
-        )
-    
+        vc,
+        names="option",  # Use column names directly
+        values="Count",
+        color="option",  
+        category_orders={"option": category_order}
+    )
     # Update trace style (optional)
     fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value")
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
@@ -87,19 +88,23 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order):
     return html.Div([title_html, dcc.Graph(figure=fig)])
 
 def create_ordered_pie_chart(df, question, category_order):
-    value_counts = df[question].value_counts()
-    
-    print(value_counts)
-    print(value_counts.shape)
-    print(value_counts.head())
-    
+    # Get value counts and convert to DataFrame
+    ord_values = df[question].value_counts().reset_index()
+    ord_values.columns = ["option", "Count"]  # Rename columns
+
+    print(ord_values)  # Debugging
+    print(ord_values.shape)
+    print(ord_values.head())
+
+    # Create the pie chart
     fig = px.pie(
-        value_counts, 
-        names=value_counts.index, 
-        values=value_counts.values, 
-        color=value_counts.index, 
-        category_orders={question: category_order}
+        ord_values,  
+        names="option",  # Use the column name directly
+        values="Count",
+        color="option",
+        category_orders={"option": category_order}
     )
+    
     fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value")
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
     
