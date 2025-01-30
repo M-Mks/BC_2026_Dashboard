@@ -92,7 +92,7 @@ def create_ordered_pie_chart(df, question, category_order):
     ord_values = df[question].value_counts().reset_index()
     cat_c, v_c = ord_values.columns  
 
-    ord_values[cat_c] = pd.Categorical(vc[cat_c], categories=category_order, ordered=True)
+    ord_values[cat_c] = pd.Categorical(ord_values[cat_c], categories=category_order, ordered=True)
     ord_values = ord_values.sort_values(by=cat_c)
 
     # Create the pie chart
