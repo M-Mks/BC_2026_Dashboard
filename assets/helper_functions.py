@@ -23,17 +23,17 @@ def create_multi_select_histogram(df, question):
     hist_df = df[question].dropna().str.split(",").explode().str.strip()
     unique_hist = sorted(hist_df.unique())
     hist_counts = pd.DataFrame({
-        "Option": unique_hist,
-        "Count": [hist_df.tolist().count(opt) for opt in unique_hist]
+        "a": unique_hist,
+        "b": [hist_df.tolist().count(opt) for opt in unique_hist]
     })
     print(unique_hist)
     fig = px.bar(
-        hist_counts, x="Option", y="Count", 
-        color="Option", 
-        category_orders={"Option": unique_hist}
+        hist_counts, x="a", y="b", 
+        color="a", 
+        category_orders={"a": unique_hist}
     )
-    print(hist_counts["Count"] / hist_counts["Count"].max())
-    fig.update_traces(marker_color=sample_colorscale("RdYlGn", hist_counts["Count"] / hist_counts["Count"].max()))
+    print(hist_counts["a"] / hist_counts["b"].max())
+    fig.update_traces(marker_color=sample_colorscale("RdYlGn", hist_counts["a"] / hist_counts["b"].max()))
     
     fig.update_layout(
         title=None, 
@@ -59,17 +59,17 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order):
     
     # Count occurrences of each category
     vc = mapped_pie.value_counts().reset_index()
-    vc.columns = ["option", "Count"]  # Rename for clarity
+    vc.columns = ["a", "b"]  # Rename for clarity
 
     print(vc)  # Debugging
 
     # Create the pie chart
     fig = px.pie(
         vc,
-        names="option",  # Use column names directly
-        values="Count",
-        color="option",  
-        category_orders={"option": category_order}
+        names="a",  # Use column names directly
+        values="b",
+        color="a",  
+        category_orders={"a": category_order}
     )
     # Update trace style (optional)
     fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value")
@@ -90,7 +90,7 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order):
 def create_ordered_pie_chart(df, question, category_order):
     # Get value counts and convert to DataFrame
     ord_values = df[question].value_counts().reset_index()
-    ord_values.columns = ["option", "Count"]  # Rename columns
+    ord_values.columns = ["a", "b"]  # Rename columns
 
     print(ord_values)  # Debugging
     print(ord_values.shape)
@@ -99,10 +99,10 @@ def create_ordered_pie_chart(df, question, category_order):
     # Create the pie chart
     fig = px.pie(
         ord_values,  
-        names="option",  # Use the column name directly
-        values="Count",
-        color="option",
-        category_orders={"option": category_order}
+        names="a",  # Use the column name directly
+        values="b",
+        color="a",
+        category_orders={"a": category_order}
     )
     
     fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value")
