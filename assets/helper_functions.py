@@ -25,25 +25,24 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order):
     
     # Count occurrences of each category
     vc = mapped_pie.value_counts().reset_index()
-    vc.columns = ["a", "b"]  # Rename for clarity
-    vc["b"] = pd.to_numeric(vc["b"])
-
-
+    
+    # Extract names and values dynamically without renaming columns
+    category_column, value_column = vc.columns  # Get column names dynamically
     print(vc.dtypes)  # Debugging
 
     # Create the pie chart
     fig = px.pie(
         vc,
-        names="a",  # Use column names directly
-        values="b",
-        color="a",  
-        category_orders={"a": category_order}
+        names=category_column,  # Use extracted column names
+        values=value_column,
+        color=category_column,  
+        category_orders={category_column: category_order}
     )
-    # Update trace style (optional)
+    
+    # Update trace style
     fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value")
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
     
-
     # Create a title for the chart
     title_html = html.Div(
         f"{question}",
