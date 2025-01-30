@@ -56,23 +56,19 @@ def create_multi_select_histogram(df, question):
     hist_df = df[question].dropna().str.split(",").explode().str.strip()
     unique_hist = sorted(hist_df.unique())
     hist_counts = pd.DataFrame({
-        "a": unique_hist,
-        "b": [hist_df.tolist().count(opt) for opt in unique_hist] 
+        "Answers": unique_hist,
+        "Counts": [hist_df.tolist().count(opt) for opt in unique_hist] 
     })
-    # Rename columns
-    hist_counts.columns = ["a", "b"]
-    hist_counts["b"] = pd.to_numeric(hist_counts["b"])  # Ensure 'b' is numeric
-        
-    fig = px.bar(
-        hist_counts, x="a", y="b", 
-        color="a", 
-    )
-
-    fig.update_traces(marker_color=sample_colorscale("RdYlGn", hist_counts["b"] / hist_counts["b"].max()))    
+            
+    fig = px.bar(hist_counts, x="Answers", y="Counts")
+    
+    print(hist_counts)
+    fig.update_traces(marker_color=sample_colorscale("RdYlGn", hist_counts["Counts"] / hist_counts["Counts"].max())) 
+       
     fig.update_layout(
         title=None, 
-        xaxis_title="Options",
-        yaxis_title="Count",
+        xaxis_title="Answers",
+        yaxis_title="Counts",
         legend=GRAPH_LAYOUT["legend"], 
         **GRAPH_LAYOUT["general"]
     )
