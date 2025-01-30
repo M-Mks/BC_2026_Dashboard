@@ -23,12 +23,11 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order):
     # Map the values using the value_mapping and handle missing values
     mapped_pie = df[question].map(value_mapping).fillna("Unknown")
     
-    # Count occurrences of each category
     vc = mapped_pie.value_counts().reset_index()
-    
-    # Extract names and values dynamically without renaming columns
-    category_column, value_column = vc.columns  # Get column names dynamically
-    print(vc.dtypes)  # Debugging
+    category_column, value_column = vc.columns  
+
+    vc[category_column] = pd.Categorical(vc[category_column], categories=category_order, ordered=True)
+    vc = vc.sort_values(by=category_column)
 
     # Create the pie chart
     fig = px.pie(
@@ -36,11 +35,10 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order):
         names=category_column,  # Use extracted column names
         values=value_column,
         color=category_column,  
-        #category_orders={category_column: category_order}
     )
     
     # Update trace style
-    fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value")
+    fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value", sort = False)
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
     
     # Create a title for the chart
@@ -68,7 +66,6 @@ def create_multi_select_histogram(df, question):
     fig = px.bar(
         hist_counts, x="a", y="b", 
         color="a", 
-        #category_orders={"a": unique_hist}
     )
 
     fig.update_traces(marker_color=sample_colorscale("RdYlGn", hist_counts["b"] / hist_counts["b"].max()))    
@@ -93,24 +90,20 @@ def create_multi_select_histogram(df, question):
 def create_ordered_pie_chart(df, question, category_order):
     # Get value counts and convert to DataFrame
     ord_values = df[question].value_counts().reset_index()
-    ord_values.columns = ["a", "b"]  # Rename columns
-    ord_values["b"] = pd.to_numeric(ord_values["b"])
+    cat_c, v_c = ord_values.columns  
 
-
-    print(ord_values)  # Debugging
-    print(ord_values.shape)
-    print(ord_values.head())
+    ord_values[cat_c] = pd.Categorical(vc[cat_c], categories=category_order, ordered=True)
+    ord_values = ord_values.sort_values(by=cat_c)
 
     # Create the pie chart
     fig = px.pie(
         ord_values,  
-        names="a",  # Use the column name directly
-        values="b",
-        color="a",
-        #category_orders={"a": category_order}
+        names=cat_c,  # Use the column name directly
+        values=v_c,
+        color=cat_c,
     )
     
-    fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value")
+    fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value", sort = False)
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
     
     title_html = html.Div(
