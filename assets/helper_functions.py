@@ -24,16 +24,22 @@ def create_multi_select_histogram(df, question):
     unique_hist = sorted(hist_df.unique())
     hist_counts = pd.DataFrame({
         "a": unique_hist,
-        "b": [hist_df.tolist().count(opt) for opt in unique_hist]
+        "b": [hist_df.tolist().count(opt) for opt in unique_hist] 
     })
+    # Rename columns
+    hist_counts.columns = ["a", "b"]
+    hist_counts["b"] = pd.to_numeric(hist_counts["b"])  # Ensure 'b' is numeric
+    
     print(unique_hist)
     fig = px.bar(
         hist_counts, x="a", y="b", 
         color="a", 
         category_orders={"a": unique_hist}
     )
-    print(hist_counts["a"] / hist_counts["b"].max())
+    print(hist_counts["b"].dtype)
+    ''''
     fig.update_traces(marker_color=sample_colorscale("RdYlGn", hist_counts["a"] / hist_counts["b"].max()))
+    '''
     
     fig.update_layout(
         title=None, 
@@ -60,6 +66,8 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order):
     # Count occurrences of each category
     vc = mapped_pie.value_counts().reset_index()
     vc.columns = ["a", "b"]  # Rename for clarity
+    vc["b"] = pd.to_numeric(vc["b"])
+
 
     print(vc)  # Debugging
 
@@ -91,6 +99,8 @@ def create_ordered_pie_chart(df, question, category_order):
     # Get value counts and convert to DataFrame
     ord_values = df[question].value_counts().reset_index()
     ord_values.columns = ["a", "b"]  # Rename columns
+    ord_values["b"] = pd.to_numeric(ord_values["b"])
+
 
     print(ord_values)  # Debugging
     print(ord_values.shape)
