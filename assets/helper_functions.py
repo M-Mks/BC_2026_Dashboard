@@ -36,7 +36,7 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order):
         names=category_column,  # Use extracted column names
         values=value_column,
         color=category_column,  
-        category_orders={category_column: category_order}
+        #category_orders={category_column: category_order}
     )
     
     # Update trace style
@@ -68,7 +68,7 @@ def create_multi_select_histogram(df, question):
     fig = px.bar(
         hist_counts, x="a", y="b", 
         color="a", 
-        category_orders={"a": unique_hist}
+        #category_orders={"a": unique_hist}
     )
 
     fig.update_traces(marker_color=sample_colorscale("RdYlGn", hist_counts["b"] / hist_counts["b"].max()))    
@@ -107,7 +107,7 @@ def create_ordered_pie_chart(df, question, category_order):
         names="a",  # Use the column name directly
         values="b",
         color="a",
-        category_orders={"a": category_order}
+        #category_orders={"a": category_order}
     )
     
     fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r), hoverinfo="name+value")
