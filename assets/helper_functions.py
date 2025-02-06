@@ -2,7 +2,7 @@ import plotly.express as px
 import pandas as pd
 from dash import html, dcc
 from plotly.colors import sample_colorscale
-from assets.layouts import GRAPH_LAYOUT
+from assets.layouts import GRAPH_LAYOUT, bc_service_label
 
 
 def create_pie_chart(df, question):
@@ -11,16 +11,22 @@ def create_pie_chart(df, question):
 
     # Define colors: Red-Green for Yes/No, otherwise Sequential Blue
     if set(unique_labels) == {"Yes", "No"}:
-        color_mapping = {"Yes": "#1a9850", "No": "#d73027"}  # Green for Yes, Red for No
+        color_mapping = {"Yes": "#32a35e", "No": "#e34a42"}  # Green for Yes, Red for No
         fig = px.pie(df, names=question, title=f"{question}", color=question, color_discrete_map=color_mapping)
+        fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
     else:
         fig = px.pie(df, names=question, title=f"{question}")
         fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r))
-
+        fig.update_layout(title = None, legend=dict(
+            orientation="v",  # Vertical legend
+            x=0.5,           # Position it on the right
+            y=1,            # Center it vertically
+            xanchor="center",
+            yanchor="bottom"
+        ))
     # General layout updates
-    fig.update_traces(hoverinfo="name+value")
-    fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
-
+    fig.update_traces(hovertemplate="%{label}: %{value}")
+    
     title_html = html.Div(
         f"{question}",
         style={
@@ -51,7 +57,7 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order,color_m
     )
     
     # Update trace style
-    fig.update_traces(hoverinfo="name+value", sort = False)
+    fig.update_traces(hovertemplate="%{label}: %{value}", sort = False)
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
     
     # Create a title for the chart
@@ -67,20 +73,21 @@ def create_numeric_pie_chart(df, question, value_mapping, category_order,color_m
 
 def create_multi_select_histogram(df, question):
     hist_df = df[question].dropna().str.split(",").explode().str.strip()
-    unique_hist = sorted(hist_df.unique())
+    hist_df = hist_df.map(bc_service_label).dropna()
+    unique_hist = sorted(hist_df.unique(), reverse = True)
     hist_counts = pd.DataFrame({
         "Answers": unique_hist,
         "Counts": [hist_df.tolist().count(opt) for opt in unique_hist] 
     })
             
-    fig = px.bar(hist_counts, x="Answers", y="Counts")
+    fig = px.bar(hist_counts, x="Counts", y="Answers", orientation="h")
     
     fig.update_traces(marker_color=sample_colorscale("RdYlGn", hist_counts["Counts"] / hist_counts["Counts"].max())) 
        
     fig.update_layout(
         title=None, 
-        xaxis_title="Answers",
-        yaxis_title="Counts",
+        xaxis_title="Counts",
+        yaxis_title="Answers",
         legend=GRAPH_LAYOUT["legend"], 
         **GRAPH_LAYOUT["general"]
     )
@@ -102,12 +109,11 @@ def create_ordered_pie_chart(df, question, category_order):
 
     ord_values[cat_c] = pd.Categorical(ord_values[cat_c], categories=category_order, ordered=True)
     ord_values = ord_values.sort_values(by=cat_c)
-    print(ord_values)
     
-    color_mapping = {"I fully disagree": "#d73027",
-                    "I slightly disagree":"#fc8d59", 
-                    "I slightly agree":"#fee08b", 
-                    "I fully agree":"#1a9850"}
+    color_mapping = {"I fully disagree": "#e34a42",
+                    "I slightly disagree":"#fcd177", 
+                    "I slightly agree":"#98c792", 
+                    "I fully agree":"#32a35e"}
     
 # Create the pie chart
     fig = px.pie(
@@ -115,12 +121,10 @@ def create_ordered_pie_chart(df, question, category_order):
         names=cat_c,  # Use the column name directly
         values=v_c,
         color=cat_c,
-        color_discrete_map = color_mapping
-    )
-    
-    fig.update_traces(hoverinfo="name+value", sort = False)
+        color_discrete_map = color_mapping,
+        )
+    fig.update_traces(hovertemplate="%{label}: %{value}",sort = False)
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
-    
     title_html = html.Div(
         f"{question}",
         style={

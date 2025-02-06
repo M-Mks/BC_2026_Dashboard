@@ -32,52 +32,44 @@ app = Dash(__name__)
 server = app.server
 app.title = "Survey Results Dashboard"
 
-def create_graph_for_question(question, is_numeric=False, section=None):
+def create_graph_for_question(question, is_numeric=False):
         
     # For specific pie charts
-    if question in [df.columns[1], df.columns[2], df.columns[3]]:
-        #print(f"Generating pie chart for {question}")  # Debugging
+    if question in [df.columns[1], df.columns[2], df.columns[4]]:
         return create_pie_chart(df, question)
         
     # For numeric pie charts (non-Section 2)
-    if question in df.columns[4:10]:
-        #print(f"Generating numeric graph for {question}")  # Debugging
-        return create_numeric_pie_chart(df, question, value_mapping={
-            1: "Very Poor", 2: "Poor", 3: "Good", 4: "Very Good"
-        }, category_order=["Very Poor", "Poor", "Good", "Very Good"], color_mapping = {
-        "Very Poor": "#d73027",
-        "Poor": "#fc8d59",       
-        "Good": "#fee08b",      
-        "Very Good": "#1a9850"  
-    })
+    if question in [df.columns[3], df.columns[15], df.columns[27]] + list(df.columns[5:10]):
+        return create_numeric_pie_chart(df, question, value_mapping={1: "Very Poor", 2: "Poor", 3: "Good", 4: "Very Good"}, 
+                                        category_order=["Very Poor", "Poor", "Good", "Very Good"], 
+                                        color_mapping = {"Very Poor": "#e34a42",       
+                                                         "Poor": "#fcd177",     
+                                                         "Good": "#98c792",      
+                                                         "Very Good": "#32a35e"})
     
     # For multi-select pie chart in a specific section
-    if  question in [df.columns[13]]:
-        #print(f"Generating multi-select pie chart for {question} in {section}")  # Debugging
+    if  question in [df.columns[14]]:
         return create_multi_select_histogram(df, question)
     
     # For specific ordered pie charts
-    if question in [df.columns[32], df.columns[33], df.columns[34]]:
+    if question in [df.columns[36], df.columns[37], df.columns[38]]:
         return create_ordered_pie_chart(df, question, category_order=["I fully disagree", "I slightly disagree", "I slightly agree", "I fully agree"])
     
     # For numeric pie charts with a different value mapping
     if is_numeric:
-        #print(f"Generating numeric graph for {question}")  # Debugging
         return create_numeric_pie_chart(df, question, 
                                         value_mapping={1: "Not Interested", 2: "Somewhat interested", 3: "Interested", 4: "Essential"}, 
                                         category_order=["Not Interested", "Somewhat interested", "Interested", "Essential"], 
-                                        color_mapping = {"Not Interested": "#d73027", "Somewhat interested":"#fc8d59", "Interested":"#fee08b", "Essential":"#1a9850"})
+                                        color_mapping = {"Not Interested": "#e34a42", "Somewhat interested":"#fcd177", "Interested":"#98c792", "Essential":"#32a35e"})
 
     # For word clouds
     if df[question].dtype == "object":
-        #print(f"Generating word cloud for {question}")  # Debugging
         return generate_wordcloud_for_question(question)
     
     # Default fallback
     return html.Div(f"No graph or word cloud for {question} - unsupported data type.")
     
 def generate_wordcloud_for_question(question):
-    #print(f"Generating word cloud for question: {question}")  # Debugging
     if df[question].dtype == "object":  # Only create word clouds for text data
         text = " ".join(df[question].dropna().astype(str))  # Combine text from the column
         if len(text.strip()) == 0:
@@ -190,10 +182,10 @@ app.layout = html.Div(
                             f"Respondent Count: {respondent_count}",
                             style=COUNTER_STYLE,
                         ) if section == "Section 1: About the Respondent" else None,
-                            
+                                                
                         html.Div(
                             id=f"graphs-{section}",
-                            style=SECTION_LAYOUT if section != "Section 1: About the Respondent" else {},  # Remove SECTION_LAYOUT for Section 1
+                            style=SECTION_LAYOUT,   
                         ),
                     ]
                 ) for section in sections
@@ -213,7 +205,6 @@ def update_graphs_by_section(selected_section):
 
     for col in section_columns:
         question = df.columns[col]
-        #print(f"Creating graph for question: {question}")  # Debugging: check the question being processed
         is_numeric = df[question].dtype in ["int64", "float64"]
         graph = create_graph_for_question(question, is_numeric=is_numeric)
 
