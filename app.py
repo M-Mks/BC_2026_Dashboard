@@ -39,7 +39,7 @@ def create_graph_for_question(question, is_numeric=False):
         return create_pie_chart(df, question)
         
     # For numeric pie charts (non-Section 2)
-    if question in [df.columns[3], df.columns[15], df.columns[27]] + list(df.columns[5:10]):
+    if question in [df.columns[3], df.columns[15], df.columns[27]] + list(df.columns[5:11]):
         return create_numeric_pie_chart(df, question, value_mapping={1: "Very Poor", 2: "Poor", 3: "Good", 4: "Very Good"}, 
                                         category_order=["Very Poor", "Poor", "Good", "Very Good"], 
                                         color_mapping = {"Very Poor": "#e34a42",       
