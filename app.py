@@ -10,17 +10,12 @@ import base64
 import matplotlib.pyplot as plt
 
 # Importing custom layout configurations from layouts.py
-from assets.helper_functions import create_pie_chart, create_multi_select_histogram, create_numeric_pie_chart, create_ordered_pie_chart
-from assets.layouts import custom_legend, DIV_STYLE, SECTION_LAYOUT, sections, section_subtitles, COUNTER_STYLE
+from assets.helper_functions import YesNo_pie_chart, Section_1_pie_chart, create_multi_select_histogram, Interest_S3_pie_chart, Interest_S4_pie_chart, Agreement_pie_chart, create_pies
+from assets.layouts import DIV_STYLE, SECTION_LAYOUT, sections, section_subtitles, COUNTER_STYLE
 
 # Load the CSV file
-file_path = "Copy_Rand_Quantitative_results.csv"  # Update with your CSV file path
+file_path = "stakeholder_consultation.csv"  # Update with your CSV file path
 df = pd.read_csv(file_path, sep=";", encoding="utf-8")
-
-# Apply the legend replacements for specific columns
-for col, legend in custom_legend.items():
-    if col in df.columns:
-        df[col] = df[col].map(legend)
 
 # Define custom words to omit from the word cloud
 custom_stopwords = set(STOPWORDS).union({"survey", "data", "result", "Data", "value", "Lake", "Blue", "Cloud", "EDITO", "user", "s"})  # Add/remove words as needed
@@ -32,49 +27,71 @@ app = Dash(__name__)
 server = app.server
 app.title = "Survey Results Dashboard"
 
-def create_graph_for_question(question, is_numeric=False):
-        
-    # For specific pie charts
-    if question in [df.columns[1], df.columns[2], df.columns[4]]:
-        return create_pie_chart(df, question)
-        
-    # For numeric pie charts (non-Section 2)
-    if question in [df.columns[3], df.columns[15], df.columns[27]] + list(df.columns[5:11]):
-        return create_numeric_pie_chart(df, question, value_mapping={1: "Very Poor", 2: "Poor", 3: "Good", 4: "Very Good"}, 
-                                        category_order=["Very Poor", "Poor", "Good", "Very Good"], 
-                                        color_mapping = {"Very Poor": "#e34a42",       
-                                                         "Poor": "#fcd177",     
-                                                         "Good": "#98c792",      
-                                                         "Very Good": "#32a35e"})
-    
-    # For multi-select pie chart in a specific section
-    if  question in [df.columns[14]]:
-        return create_multi_select_histogram(df, question)
-    
-    # For specific ordered pie charts
-    if question in [df.columns[36], df.columns[37], df.columns[38]]:
-        return create_ordered_pie_chart(df, question, category_order=["I fully disagree", "I slightly disagree", "I slightly agree", "I fully agree"])
-    
-    # For numeric pie charts with a different value mapping
-    if is_numeric:
-        return create_numeric_pie_chart(df, question, 
-                                        value_mapping={1: "Not Interested", 2: "Somewhat interested", 3: "Interested", 4: "Essential"}, 
-                                        category_order=["Not Interested", "Somewhat interested", "Interested", "Essential"], 
-                                        color_mapping = {"Not Interested": "#e34a42", "Somewhat interested":"#fcd177", "Interested":"#98c792", "Essential":"#32a35e"})
+# Graph style definition
+wordcloud_cols = list(range(33, 36)) + list(range(64, 67)) + list(range(81, 84)) + [67,69, 77]
+interestS3_cols = list(range(57, 64))
+interestS4_cols =  list(range(70, 77))
+extra_wc_cols = list(range(37, 56))
+agreement_cols = list(range(78, 81))  # CA to CC
+pies_cols = list(range(27, 33))+[56, 68]  # Z to AG
+histogram_col = [36]
+print(wordcloud_cols)
 
-    # For word clouds
-    if df[question].dtype == "object":
+def create_graph_for_question(question):
+    #General
+    question_index = df.columns.get_loc(question)
+        
+    # For section1 pie charts
+    if question_index in sections["Section 1: About the Respondent"]:
+        return Section_1_pie_chart(df, question)
+    
+    if question_index in wordcloud_cols:  # Only create word clouds for text data
         return generate_wordcloud_for_question(question)
     
-    # Default fallback
-    return html.Div(f"No graph or word cloud for {question} - unsupported data type.")
+    # For multi-select pie chart in a specific section
+    if  question in [df.columns[36]]:
+        return create_multi_select_histogram(df, question)
     
-def generate_wordcloud_for_question(question):
-    if df[question].dtype == "object":  # Only create word clouds for text data
+    if question_index in interestS3_cols:
+        return Interest_S3_pie_chart(df, question)
+    
+    if question_index in interestS4_cols:
+        return Interest_S4_pie_chart(df, question)
+    
+    if question_index in agreement_cols:
+        return Agreement_pie_chart(df, question, category_order={"I fully disagree",
+                                                                    "I slightly disagree", 
+                                                                    "I slightly agree", 
+                                                                    "I fully agree"})
+                
+    if question_index in pies_cols:
+        return create_pies(df, question,category_order=["Very Poor",
+                                                            "Poor", 
+                                                            "Good", 
+                                                            "Very Good"], 
+                                        color_mapping = {"Very Poor": "#e34a42",       
+                                                            "Poor": "#fcd177",     
+                                                            "Good": "#98c792",      
+                                                            "Very Good": "#32a35e"})
+    if question in [df.columns[25]]:
+        return create_pies(df, question, category_order=["Very Unsatisfied",
+                                                            "Unsatisfied", 
+                                                            "Neutral", 
+                                                            "Satisfied",
+                                                           "Very Satisfied"], 
+                                        color_mapping = {"Very Unsatisfied": "#e34a42",       
+                                                            "Unsatisfied": "#fcd177",
+                                                            "Neutral": "#c5d89f",  # Light Olive Green
+                                                            "Satisfied": "#98c792",      
+                                                            "Very Satisfied": "#32a35e"})
+
+    if question in [df.columns[26]]:
+        return YesNo_pie_chart(df, question)  
+
+def generate_wordcloud_for_question(question):      
         text = " ".join(df[question].dropna().astype(str))  # Combine text from the column
         if len(text.strip()) == 0:
             return html.Div("No valid responses for word cloud.", style={"color": "red"})
-        
         # Generate the word cloud
         wordcloud = WordCloud(
             width=800,
@@ -118,7 +135,7 @@ def generate_wordcloud_for_question(question):
             }
         )
         return html.Div([title_html, wordcloud_html])
-    return html.Div(f"No word cloud for {question} - not text data.")
+    
 
 app.layout = html.Div(
     style={"fontFamily": "Arial, sans-serif", "margin": "24px"},
@@ -205,8 +222,7 @@ def update_graphs_by_section(selected_section):
 
     for col in section_columns:
         question = df.columns[col]
-        is_numeric = df[question].dtype in ["int64", "float64"]
-        graph = create_graph_for_question(question, is_numeric=is_numeric)
+        graph = create_graph_for_question(question)
 
         # Ensure that each graph is wrapped in a div with proper styling
         graphs.append(html.Div(children=[graph], style=DIV_STYLE))

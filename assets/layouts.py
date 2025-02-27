@@ -113,40 +113,19 @@ SECTION_LAYOUT = {
 
 # Define the sections with corrected column indices
 sections = {
-    "Section 1: About the Respondent": [1, 2, 3, 4],  # Indices of columns B to C
-    "Section 2: About your current use of Blue-Cloud": [5, 6, 7, 8, 9, 10, 11, 12, 13],  # Columns D to O
-    "Extra Section: Blue cloud Services usage": [14],
-    "Section 3: About Blue-Cloud thematic contribution to EOSC": [15, 16, 17, 18, 19, 20, 21,24, 25, 26, 27, 28],  # Columns P to AA
-    "Section 4: About Blue-Cloud evolution as an incubator for the EU DTO": [29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39],  # Columns Y to AJ
-    "Section 5: About Blue-Cloud as a contributor to the UN Ocean Decade": [40],  # Column AK
+    "Section 1: About the Respondent": [23, 24],
+    "Section 2: About your current use of Blue-Cloud": [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35],
+    "Extra Section: Blue cloud Services usage": [36],
+    "Section 3: About Blue-Cloud thematic contribution to EOSC": [56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67],
+    "Section 4: About Blue-Cloud evolution as an incubator for the EU DTO": [68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81],
+    "Section 5: About Blue-Cloud as a contributor to the UN Ocean Decade": [82, 83],
 }
 # Define subtitles for each section
 section_subtitles = {
     "Section 1: About the Respondent": "Professional and Organisational repartition of respondants",
-    "Section 2: About your current use of Blue-Cloud": "Evaluation of Blue Cloud services on a scale of 1 to 4",
+    "Section 2: About your current use of Blue-Cloud": "Blue-Cloud is designed to support collaborative scientific research by promoting open science practices. It aims to be more than just a platform: it seeks to be a comprehensive infrastructure that fosters collaboration, open science, and efficient research workflows. This is achieved by providing customizable and readily available VLabs that can be tailored to the specific needs of diverse research communities. In this section, we invite your input on Blue-Cloud’s services, including those offered by existing VLabs.",
     "Extra Section: Blue cloud Services usage": "Usage and Evaluation of specific Services",
-    "Section 3: About Blue-Cloud thematic contribution to EOSC": "As a Blue-Cloud stakeholder, what type of value, services and/or type of representation would you be looking for in EOSC? ",
-    "Section 4: About Blue-Cloud evolution as an incubator for the EU DTO": "Classification of interest in potential new services.",
+    "Section 3: About Blue-Cloud thematic contribution to EOSC": "Blue-Cloud is conceived as a marine thematic service that is contributing to shaping the European Open Science Cloud (EOSC). Likewise, participation in EOSC opens opportunities for the Blue-Cloud community. As a Blue-Cloud stakeholder, what type of value, services and/or type of representation would you be looking for in EOSC? Please rank the following according to your level of interest",
+    "Section 4: About Blue-Cloud evolution as an incubator for the EU DTO": "Please consider the following statements, which tackle aspects related to interoperability between Blue-Cloud and EDITO -the public infrastructure of the European Digital Twin Ocean- and classify them according to their interest to you",
     "Section 5: About Blue-Cloud as a contributor to the UN Ocean Decade": "", 
 }
-
-bc_service_label = {
-    "a":"a. EOV Physic Workbench pipeline script & workflow",
-    "b":"b. EOV Physic Workbench’s highly qualified Temperature & Salinity EOV dataset",
-    "c":"c. EOV Eutrophication Workbench’s pipeline script & workflow",
-    "d":"d. EOV Eutrophication Workbench’s highly qualified EOV",
-    "e":"e. EOV Eutrophication Workbench’s derived gridded",
-    "f":"f. EOV & EBV Ecosystems Workbench (CEPHALOPOD)",
-    "g":"g. EOV & EBV Workbench for Ecosystems’s highly qualified EOV datasets",
-    "h":"h. Integration of Coastal Ocean Observations Along Europe (TS1: Transboundary processes)",
-    "i":"i. Integration of Coastal Ocean Observations Along Europe (TS2: Extreme events)",
-    "j":"j. Integration of Coastal Ocean Observations Along Europe (TS3: Ocean Glider)",
-    "k":"k. Coastal Currents from Observations",
-    "l":"l. Biogeochemical model of Carbon Plankton Dynamics",
-    "m":"m. Carbon Plankton Dynamics” Data & Scientific manuscript",
-    "n":"n. Marine Environmental Indicators VLab’s Ocean Heat Content (OHC)",
-    "o":"o. Marine Environmental Indicators VLab’s Marine Heat Wave (MHW)",
-    "p":"p. Marine Environmental Indicators VLab’s Trophic Index (TRIX)",
-    "q":"q. Marine Environmental Indicators VLab’s Enhanced Storm Severity Index V2 (SSI V2)",
-    "r":"r. Global Fisheries Atlas VLab",
-    "s":"s. Blue-Cloud Data Discovery & Access Service"}
