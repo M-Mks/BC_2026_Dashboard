@@ -222,14 +222,14 @@ def create_yes_histogram(df, extra_hist_cols):
             traceorder="normal",  # Keeps the order of traces
             font=dict(size=12),
             orientation="h",  # Horizontal legend
-            tracegroupgap=10 # Space between legend items
+            tracegroupgap=15 # Space between legend items
         ),
         **GRAPH_LAYOUT["general"]  # Apply the general layout settings
     )
 
     # Title for the graph
     title_html = html.Div(
-        "Number of service users per specific service",
+        "Number of service users per Blue-Cloud service",
         style={
             'textAlign': 'center', 'fontSize': '20px', 'color': '#1f2a44',
             'fontFamily': 'Helvetica, Arial, sans-serif', 'fontWeight': 'normal', 'marginBottom': '2px'

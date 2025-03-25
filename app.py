@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 # Importing custom layout configurations from layouts.py
 from assets.helper_functions import YesNo_pie_chart, Section_1_pie_chart, create_yes_histogram, Interest_S3_pie_chart, Interest_S4_pie_chart, Agreement_pie_chart, create_pies
-from assets.layouts import DIV_STYLE, SECTION_LAYOUT, sections, section_subtitles, COUNTER_STYLE
+from assets.layouts import DIV_STYLE, SECTION_LAYOUT, sections, section_subtitles, COUNTER_STYLE, DIV5_STYLE
 
 # Load the CSV file
 file_path = "stakeholder_consultation_final.csv"  # Update with your CSV file path
@@ -35,7 +35,6 @@ extra_hist_cols = [16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 4
 agreement_cols = list(range(81, 84))  # CA to CC
 pies_cols = list([5, 7, 9, 11, 12, 13, 59, 71])  # Z to AG
 YesNo_col = list([6])
-print(wordcloud_cols)
 
 def create_graph_for_question(question):
     #General
@@ -106,10 +105,10 @@ def generate_wordcloud_for_question(question):
 
         # Convert to base64 image for display
         buffer = io.BytesIO()
-        plt.figure(figsize=(10, 5))
+        plt.figure(figsize=(10, 6))  # Reduce figure size
         plt.imshow(wordcloud, interpolation="bilinear")
         plt.axis("off")
-        plt.savefig(buffer, format="png")
+        plt.savefig(buffer, format="png", bbox_inches='tight')  # Removes extra padding
         buffer.seek(0)
         encoded_image = base64.b64encode(buffer.read()).decode("utf-8")
         buffer.close()
@@ -119,23 +118,33 @@ def generate_wordcloud_for_question(question):
             question,
             style={
                 'textAlign': 'center',
-                'fontSize': '20px',
+                'fontSize': '20px',  # Reduce font size slightly
                 'color': '#1f2a44',
                 'fontFamily': 'Helvetica, Arial, sans-serif',
                 'fontWeight': 'normal',
+                'marginBottom': '5px',  # Reduce space between title and word cloud
             }
         )
+
         wordcloud_html = html.Img(
             src=f"data:image/png;base64,{encoded_image}",
             style={
                 'display': 'block',
-                'marginLeft': 'auto',
-                'marginRight': 'auto',
-                'width': '100%',
-                'maxHeight': '100%',
+                'margin': 'auto',  # Center the image and remove extra space
+                'width': '80%',  # Reduce width
+                'maxHeight': '600px',  # Adjust maximum height
             }
         )
-        return html.Div([title_html, wordcloud_html])
+
+        return html.Div(
+            [title_html, wordcloud_html],
+            style={
+                'textAlign': 'center',
+                'padding': '10px',
+                'margin': '0px auto',
+                'maxWidth': '1000px'  # Limit max width to prevent excessive stretching
+            }
+        )
     
 
 app.layout = html.Div(
@@ -226,12 +235,17 @@ def update_graphs_by_section(selected_section):
         # Create the combined histogram for the extra section
         graphs[selected_section].append(create_yes_histogram(df, extra_hist_cols))
 
-    else:
-        for col in section_columns:
+    for col in section_columns:
             question = df.columns[col]
-            graph = create_graph_for_question(question)
-            # Ensure that each graph is wrapped in a div with proper styling
-            graphs[selected_section].append(html.Div(children=[graph], style=DIV_STYLE))
+            question_index = df.columns.get_loc(question)
+            if question_index in wordcloud_cols:
+                graph = generate_wordcloud_for_question(question)
+                style = DIV5_STYLE
+            else:
+                graph = create_graph_for_question(question)
+                style = DIV_STYLE
+
+            graphs[selected_section].append(html.Div(children=[graph], style=style))
 
     # Ensure proper structure for the selected section's graphs
     return [html.Div(

@@ -54,24 +54,7 @@ GRAPH_LAYOUT = {
         },
     },
 }
-HISTOGRAM_GRAPH_LAYOUT = {
-    "legend": {
-        "font": {"size": 14, "color": "#4b4b4b"},
-        "itemclick": False,
-        "itemdoubleclick": False,
-        "title_font_size": 16,
-        "itemwidth": 500,  # Increase width to allow multi-line wrapping
-        "x": 0.5,
-        "xanchor": "center",
-        "y": -0.2,  # Push it further below if needed
-        "yanchor": "top",
-        "orientation": "h",
-        "bgcolor": "rgba(255, 255, 255, 0.7)",
-        "bordercolor": "#ccc",
-        "borderwidth": 1,
-        "tracegroupgap": 100,  # Reduce space between grouped legend items
-    },    
-}
+
 # Graph div styling to enhance layout
 DIV_STYLE = {
     "flex": "1 1 45%",  # Two graphs per row, each taking up 45% of the space
@@ -82,21 +65,8 @@ DIV_STYLE = {
     "backgroundColor": "#ffffff",  # White background for contrast
     "boxShadow": "0px 4px 16px rgba(0, 0, 0, 0.1)",  # Slightly more pronounced shadow for depth
     "transition": "all 0.3s ease-in-out",  # Smooth transition when hovering over elements
-}
+    }
 
-HISTOGRAM_STYLE = {
-    "display: flex"
-    "flex": "1 1 100%",  # Ensure the histogram takes up 100% of the space (full width)
-    "flexDirection: column" 
-    "padding": "20px",  # Padding around the graph for better layout and spacing
-    "boxSizing": "border-box",  # Ensure padding and borders are included in width/height calculations
-    "border": "1px solid #ecf0f1",  # Light border for a clean appearance
-    "borderRadius": "12px",  # Rounded corners for a modern touch
-    "backgroundColor": "#ffffff",  # White background for contrast
-    "boxShadow": "0px 4px 16px rgba(0, 0, 0, 0.1)",  # Slightly more pronounced shadow for depth
-    "transition": "all 0.3s ease-in-out",  # Smooth transition when hovering over elements
-    "height": "auto",  # Allow for auto-height adjustment
-}
 
 COUNTER_STYLE = {
     "textAlign": "center",
@@ -120,6 +90,16 @@ SECTION_LAYOUT = {
     "padding": "10px",  # Padding for sections
     "gap": "30px",  # Larger gap for more breathing room between graphs
     "alignItems": "center",  # Vertically center the content in each section
+}
+DIV5_STYLE = {
+    "flex": "1 100%", 
+    "padding": "10px",  # Padding around the graph for better layout
+    "boxSizing": "border-box",
+    "border": "1px solid #ecf0f1",  # Light border for a clean appearance
+    "borderRadius": "12px",  # Rounded corners for a modern touch
+    "backgroundColor": "#ffffff",  # White background for contrast
+    "boxShadow": "0px 4px 16px rgba(0, 0, 0, 0.1)",  # Slightly more pronounced shadow for depth
+    "transition": "all 0.3s ease-in-out",  # Smooth transition when hovering over elements
 }
 
 # Define the sections with corrected column indices
