@@ -21,7 +21,7 @@ def clean_S4_question_title(question):
     # Define the part of the question to remove
     intro_text = ("Please consider the following statements, which tackle aspects related " 
                   "to interoperability between Blue-Cloud and EDITO -the public infrastructure of the " 
-                  "European Digital Twin Ocean- and classify them according to their interest to you:--")
+                  "European Digital Twin Ocean- and classify them according to their interest to you:")
     
     # Remove the intro if it exists
     cleaned_S4_question = question.replace(intro_text, "").strip()
