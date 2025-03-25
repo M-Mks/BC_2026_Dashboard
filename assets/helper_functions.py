@@ -21,12 +21,21 @@ def clean_S4_question_title(question):
     # Define the part of the question to remove
     intro_text = ("Please consider the following statements, which tackle aspects related " 
                   "to interoperability between Blue-Cloud and EDITO -the public infrastructure of the " 
-                  "European Digital Twin Ocean- and classify them according to their interest to you:")
+                  "European Digital Twin Ocean- and classify them according to their interest to you:--")
     
     # Remove the intro if it exists
     cleaned_S4_question = question.replace(intro_text, "").strip()
     
     return cleaned_S4_question
+
+def clean_S42_question_title(question):
+    # Define the part of the question to remove
+    intro2_text = ("Please indicate to which extent you agree with the following statements:: --")
+    
+    # Remove the intro if it exists
+    cleaned_S42_question = question.replace(intro2_text, "").strip()
+    
+    return cleaned_S42_question
 
 def Section_1_pie_chart(df, question):
 # Define colors: Red-Green for Yes/No, otherwise Sequential Blue
@@ -39,7 +48,7 @@ def Section_1_pie_chart(df, question):
         y=1,            # Center it vertically
         xanchor="center",
         yanchor="bottom"
-    ))
+    ), **GRAPH_LAYOUT["general"])
     # General layout updates
     fig.update_traces(hovertemplate="%{label}: %{value}")
     
@@ -53,11 +62,11 @@ def Section_1_pie_chart(df, question):
     return html.Div([title_html, dcc.Graph(figure=fig)])
 
 def Interest_S3_pie_chart(df, question):
-    category_order = ["Not Interested",
+    category_order = ["Not interested",
                     "Somewhat Interested", 
                     "Interested", 
                     "Essential"]
-    color_mapping = {"Not Interested": "#e34a42",
+    color_mapping = {"Not interested": "#e34a42",
                     "Somewhat Interested":"#fcd177", 
                     "Interested":"#98c792", 
                     "Essential":"#32a35e"}
@@ -131,25 +140,40 @@ def Interest_S4_pie_chart(df, question):
     return html.Div([title_html, dcc.Graph(figure=fig)])
 
 def create_pies(df, question, category_order, color_mapping):
-    vc = df[question].fillna("Unknown").value_counts().reset_index()
+    # Handle missing values by replacing with "No Answer"
+    df_cleaned = df.copy()
+    df_cleaned[question] = df_cleaned[question].fillna("No Answer")
+
+    # Compute value counts
+    vc = df_cleaned[question].value_counts().reset_index()
     category_column, value_column = vc.columns  
 
+    # Ensure "No Answer" is included in category_order if missing
+    if "No Answer" in vc[category_column].values and "No Answer" not in category_order:
+        category_order.append("No Answer")
+
+    # Convert to categorical and sort
     vc[category_column] = pd.Categorical(vc[category_column], categories=category_order, ordered=True)
     vc = vc.sort_values(by=category_column)
-    
+
+    # Ensure "No Answer" gets a color if not in the color mapping
+    color_mapping = color_mapping.copy()  # Avoid modifying the original dictionary
+    if "No Answer" not in color_mapping:
+        color_mapping["No Answer"] = "#bbbbbb"  # Light gray for missing data
+
     # Create the pie chart
     fig = px.pie(
         vc,
-        names=category_column,  # Use extracted column names
+        names=category_column,
         values=value_column,
         color=category_column,
         color_discrete_map=color_mapping
     )
-    
+
     # Update trace style
     fig.update_traces(hovertemplate="%{label}: %{value}", sort=False)
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
-    
+
     # Create a title for the chart
     title_html = html.Div(
         f"{question}",
@@ -158,37 +182,61 @@ def create_pies(df, question, category_order, color_mapping):
             'fontFamily': 'Helvetica, Arial, sans-serif', 'fontWeight': 'normal', 'marginBottom': '2px'
         }
     )
-    
+
     return html.Div([title_html, dcc.Graph(figure=fig)])
 
-def create_multi_select_histogram(df, question):
-    hist_df = df[question].dropna().str.split(";").explode().str.strip()
-    unique_hist = sorted(hist_df.unique(), reverse = True)
-    hist_counts = pd.DataFrame({
-        "Answers": unique_hist,
-        "Counts": [hist_df.tolist().count(opt) for opt in unique_hist] 
+def count_yes_responses(df, columns):
+    yes_counts = {df.columns[col]: (df.iloc[:, col] == "Yes").sum() for col in columns}
+    return pd.DataFrame({
+        "Column": list(yes_counts.keys()),
+        "Yes Count": list(yes_counts.values())
     })
-            
-    fig = px.bar(hist_counts, x="Counts", y="Answers", orientation="h")
+
+def create_yes_histogram(df, extra_hist_cols):
+    """Creates a single horizontal bar chart showing the 'Yes' counts per column with styling."""
+    # Count "Yes" responses for the specified columns
+    yes_counts_df = count_yes_responses(df, extra_hist_cols)
     
-    fig.update_traces(marker_color=sample_colorscale("RdYlGn", hist_counts["Counts"] / hist_counts["Counts"].max())) 
-       
-    fig.update_layout(
-        title=None, 
-        xaxis_title="Counts",
-        yaxis_title="Answers",
-        legend=GRAPH_LAYOUT["legend"], 
-        **GRAPH_LAYOUT["general"]
+    # Create the bar chart
+    fig = px.bar(
+        yes_counts_df,
+        x="Yes Count",  # Use "Yes Count" as the x-axis
+        y="Column",  # Columns are used as the y-axis (questions)
+        orientation="h",  # Horizontal bars
+        text="Yes Count",
     )
 
+    # Apply color scaling
+    fig.update_traces(
+        marker_color=sample_colorscale("RdYlGn", yes_counts_df["Yes Count"] / yes_counts_df["Yes Count"].max())
+    )
+
+    # Update layout with custom legend and other settings
+    fig.update_layout(
+        title=None,
+        xaxis_title="Counts",
+        yaxis_title="Answers",
+        legend=dict(
+            title="Legend",
+            itemsizing="constant",  # Ensures the size remains constant
+            traceorder="normal",  # Keeps the order of traces
+            font=dict(size=12),
+            orientation="h",  # Horizontal legend
+            tracegroupgap=10 # Space between legend items
+        ),
+        **GRAPH_LAYOUT["general"]  # Apply the general layout settings
+    )
+
+    # Title for the graph
     title_html = html.Div(
-        f"{question}".replace("/", "<br>"),
+        "Number of 'Yes' Responses per Option",
         style={
             'textAlign': 'center', 'fontSize': '20px', 'color': '#1f2a44',
             'fontFamily': 'Helvetica, Arial, sans-serif', 'fontWeight': 'normal', 'marginBottom': '2px'
         }
     )
 
+    # Return the graph inside a div
     return html.Div([title_html, dcc.Graph(figure=fig)])
 
 def Agreement_pie_chart(df, question, category_order):
@@ -204,6 +252,7 @@ def Agreement_pie_chart(df, question, category_order):
                     "I slightly agree":"#98c792", 
                     "I fully agree":"#32a35e"}
     
+    cleaned_S42_question = clean_S42_question_title(question)
 # Create the pie chart
     fig = px.pie(
         ord_values,  
@@ -216,7 +265,7 @@ def Agreement_pie_chart(df, question, category_order):
     fig.update_traces(hovertemplate="%{label}: %{value}",sort = False)
     fig.update_layout(title=None, legend=GRAPH_LAYOUT["legend"], **GRAPH_LAYOUT["general"])
     title_html = html.Div(
-        f"{question}",
+        f"{cleaned_S42_question}",
         style={
             'textAlign': 'center', 'fontSize': '20px', 'color': '#1f2a44',
             'fontFamily': 'Helvetica, Arial, sans-serif', 'fontWeight': 'normal', 'marginBottom': '2px'

@@ -10,11 +10,11 @@ import base64
 import matplotlib.pyplot as plt
 
 # Importing custom layout configurations from layouts.py
-from assets.helper_functions import YesNo_pie_chart, Section_1_pie_chart, create_multi_select_histogram, Interest_S3_pie_chart, Interest_S4_pie_chart, Agreement_pie_chart, create_pies
+from assets.helper_functions import YesNo_pie_chart, Section_1_pie_chart, create_yes_histogram, Interest_S3_pie_chart, Interest_S4_pie_chart, Agreement_pie_chart, create_pies
 from assets.layouts import DIV_STYLE, SECTION_LAYOUT, sections, section_subtitles, COUNTER_STYLE
 
 # Load the CSV file
-file_path = "stakeholder_consultation.csv"  # Update with your CSV file path
+file_path = "stakeholder_consultation_final.csv"  # Update with your CSV file path
 df = pd.read_csv(file_path, sep=";", encoding="utf-8")
 
 # Define custom words to omit from the word cloud
@@ -28,13 +28,13 @@ server = app.server
 app.title = "Survey Results Dashboard"
 
 # Graph style definition
-wordcloud_cols = list(range(33, 36)) + list(range(64, 67)) + list(range(81, 84)) + [67,69, 77]
-interestS3_cols = list(range(57, 64))
-interestS4_cols =  list(range(70, 77))
-extra_wc_cols = list(range(37, 56))
-agreement_cols = list(range(78, 81))  # CA to CC
-pies_cols = list(range(27, 33))+[56, 68]  # Z to AG
-histogram_col = [36]
+wordcloud_cols = list(range(13, 16)) + list(range(67, 71)) + list(range(84, 87)) + [72,80]
+interestS3_cols = list(range(60, 67))
+interestS4_cols =  list(range(73, 80))
+extra_hist_cols = [16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58]
+agreement_cols = list(range(81, 84))  # CA to CC
+pies_cols = list([5, 7, 9, 11, 12, 13, 59, 71])  # Z to AG
+YesNo_col = list([6])
 print(wordcloud_cols)
 
 def create_graph_for_question(question):
@@ -44,50 +44,51 @@ def create_graph_for_question(question):
     # For section1 pie charts
     if question_index in sections["Section 1: About the Respondent"]:
         return Section_1_pie_chart(df, question)
-    
     if question_index in wordcloud_cols:  # Only create word clouds for text data
         return generate_wordcloud_for_question(question)
-    
-    # For multi-select pie chart in a specific section
-    if  question in [df.columns[36]]:
-        return create_multi_select_histogram(df, question)
-    
     if question_index in interestS3_cols:
         return Interest_S3_pie_chart(df, question)
-    
     if question_index in interestS4_cols:
         return Interest_S4_pie_chart(df, question)
-    
     if question_index in agreement_cols:
         return Agreement_pie_chart(df, question, category_order={"I fully disagree",
                                                                     "I slightly disagree", 
                                                                     "I slightly agree", 
-                                                                    "I fully agree"})
-                
+                                                                    "I fully agree"})             
     if question_index in pies_cols:
         return create_pies(df, question,category_order=["Very Poor",
                                                             "Poor", 
                                                             "Good", 
-                                                            "Very Good"], 
+                                                            "Very Good",
+                                                            "No Answer"], 
                                         color_mapping = {"Very Poor": "#e34a42",       
                                                             "Poor": "#fcd177",     
                                                             "Good": "#98c792",      
-                                                            "Very Good": "#32a35e"})
-    if question in [df.columns[25]]:
-        return create_pies(df, question, category_order=["Very Unsatisfied",
-                                                            "Unsatisfied", 
-                                                            "Neutral", 
-                                                            "Satisfied",
-                                                           "Very Satisfied"], 
-                                        color_mapping = {"Very Unsatisfied": "#e34a42",       
-                                                            "Unsatisfied": "#fcd177",
-                                                            "Neutral": "#c5d89f",  # Light Olive Green
-                                                            "Satisfied": "#98c792",      
-                                                            "Very Satisfied": "#32a35e"})
-
-    if question in [df.columns[26]]:
+                                                            "Very Good": "#32a35e",
+                                                            "No Answer": "#d3d3d3"})
+    if question in [df.columns[8]]:
+        return create_pies(df, question, category_order=["Not Useful",
+                                                         "Limited Usefulness",
+                                                         "Useful",
+                                                         "Very Useful"],     
+                                        color_mapping = {"Not Useful": "#e34a42",       
+                                                            "Limited Usefulness": "#fcd177",
+                                                            "Useful": "#98c792",  # Light Olive Green
+                                                            "Very Useful": "#32a35e"})
+    if question in [df.columns[10]]:
+        return create_pies(df, question, category_order=["Very Poor",
+                                                            "Poor", 
+                                                            "Comprehensive",
+                                                           "Very Comprehensive"], 
+                                        color_mapping = {"Very Poor": "#e34a42",       
+                                                            "Poor": "#fcd177",
+                                                            "Comprehensive": "#98c792",      
+                                                            "Very Comprehensive": "#32a35e"})
+    if question_index in YesNo_col:
         return YesNo_pie_chart(df, question)  
-
+    if question_index in [df.columns[16]]:
+        return create_yes_histogram(df, extra_hist_cols)
+                                    
 def generate_wordcloud_for_question(question):      
         text = " ".join(df[question].dropna().astype(str))  # Combine text from the column
         if len(text.strip()) == 0:
@@ -130,7 +131,7 @@ def generate_wordcloud_for_question(question):
                 'display': 'block',
                 'marginLeft': 'auto',
                 'marginRight': 'auto',
-                'maxWidth': '100%',
+                'width': '100%',
                 'maxHeight': '100%',
             }
         )
@@ -215,26 +216,30 @@ app.layout = html.Div(
     [Output(f"graphs-{section}", "children") for section in sections],
     [Input("tabs", "value")]
 )
+
 def update_graphs_by_section(selected_section):
     print(f"Selected section: {selected_section}")  # Debugging: check which section was selected
     section_columns = sections[selected_section]
-    graphs = []
+    graphs = {section: [] for section in sections}
 
-    for col in section_columns:
-        question = df.columns[col]
-        graph = create_graph_for_question(question)
+    if selected_section == "Extra Section: Blue cloud Services usage":
+        # Create the combined histogram for the extra section
+        graphs[selected_section].append(create_yes_histogram(df, extra_hist_cols))
 
-        # Ensure that each graph is wrapped in a div with proper styling
-        graphs.append(html.Div(children=[graph], style=DIV_STYLE))
+    else:
+        for col in section_columns:
+            question = df.columns[col]
+            graph = create_graph_for_question(question)
+            # Ensure that each graph is wrapped in a div with proper styling
+            graphs[selected_section].append(html.Div(children=[graph], style=DIV_STYLE))
 
     # Ensure proper structure for the selected section's graphs
-    return [
-        html.Div(
-            children=graphs if selected_section == section else [],
-            style=SECTION_LAYOUT if selected_section == section else {},  # Apply SECTION_LAYOUT only for selected section
-        )
-        for section in sections
-    ]
+    return [html.Div(
+        children=graphs[section], 
+        style=({"width": "100%"} if selected_section == "Extra Section: Blue cloud Services usage" else SECTION_LAYOUT)
+    )
+    for section in sections
+]   
     
 # Run the app
 if __name__ == "__main__":

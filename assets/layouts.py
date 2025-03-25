@@ -1,23 +1,3 @@
-# Custom legend mapping for specific columns
-custom_legend = {
-    "Professional Group": {
-        "A": "Marine (data) scientist and/or researcher",
-        "B": "IT programmer/software developer",
-        "C": "Business, infrastructure, or operations manager",
-        "D": "Public administration",
-        "E": "Other (please specify)",
-    },
-    "Organization Sector": {
-        "A": "Academia",
-        "B": "Research organisation",
-        "C": "Data and service providers",
-        "D": "Government or related policy organisations",
-        "E": "Blue Economy industry, including SMEs",
-        "F": "NGOs, including civil society & citizens",
-        "G": "Other (please specify)",
-    }
-}
-
 GRAPH_LAYOUT = {
     "title": {
         "x": 0.5,  # Center the title horizontally
@@ -74,7 +54,24 @@ GRAPH_LAYOUT = {
         },
     },
 }
-
+HISTOGRAM_GRAPH_LAYOUT = {
+    "legend": {
+        "font": {"size": 14, "color": "#4b4b4b"},
+        "itemclick": False,
+        "itemdoubleclick": False,
+        "title_font_size": 16,
+        "itemwidth": 500,  # Increase width to allow multi-line wrapping
+        "x": 0.5,
+        "xanchor": "center",
+        "y": -0.2,  # Push it further below if needed
+        "yanchor": "top",
+        "orientation": "h",
+        "bgcolor": "rgba(255, 255, 255, 0.7)",
+        "bordercolor": "#ccc",
+        "borderwidth": 1,
+        "tracegroupgap": 100,  # Reduce space between grouped legend items
+    },    
+}
 # Graph div styling to enhance layout
 DIV_STYLE = {
     "flex": "1 1 45%",  # Two graphs per row, each taking up 45% of the space
@@ -85,6 +82,20 @@ DIV_STYLE = {
     "backgroundColor": "#ffffff",  # White background for contrast
     "boxShadow": "0px 4px 16px rgba(0, 0, 0, 0.1)",  # Slightly more pronounced shadow for depth
     "transition": "all 0.3s ease-in-out",  # Smooth transition when hovering over elements
+}
+
+HISTOGRAM_STYLE = {
+    "display: flex"
+    "flex": "1 1 100%",  # Ensure the histogram takes up 100% of the space (full width)
+    "flexDirection: column" 
+    "padding": "20px",  # Padding around the graph for better layout and spacing
+    "boxSizing": "border-box",  # Ensure padding and borders are included in width/height calculations
+    "border": "1px solid #ecf0f1",  # Light border for a clean appearance
+    "borderRadius": "12px",  # Rounded corners for a modern touch
+    "backgroundColor": "#ffffff",  # White background for contrast
+    "boxShadow": "0px 4px 16px rgba(0, 0, 0, 0.1)",  # Slightly more pronounced shadow for depth
+    "transition": "all 0.3s ease-in-out",  # Smooth transition when hovering over elements
+    "height": "auto",  # Allow for auto-height adjustment
 }
 
 COUNTER_STYLE = {
@@ -113,12 +124,12 @@ SECTION_LAYOUT = {
 
 # Define the sections with corrected column indices
 sections = {
-    "Section 1: About the Respondent": [23, 24],
-    "Section 2: About your current use of Blue-Cloud": [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35],
-    "Extra Section: Blue cloud Services usage": [36],
-    "Section 3: About Blue-Cloud thematic contribution to EOSC": [56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67],
-    "Section 4: About Blue-Cloud evolution as an incubator for the EU DTO": [68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81],
-    "Section 5: About Blue-Cloud as a contributor to the UN Ocean Decade": [82, 83],
+    "Section 1: About the Respondent": [3, 4],
+    "Section 2: About your current use of Blue-Cloud": [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "Extra Section: Blue cloud Services usage": [16],
+    "Section 3: About Blue-Cloud thematic contribution to EOSC": [59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70],
+    "Section 4: About Blue-Cloud evolution as an incubator for the EU DTO": [71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84],
+    "Section 5: About Blue-Cloud as a contributor to the UN Ocean Decade": [85, 86],
 }
 # Define subtitles for each section
 section_subtitles = {
@@ -126,6 +137,6 @@ section_subtitles = {
     "Section 2: About your current use of Blue-Cloud": "Blue-Cloud is designed to support collaborative scientific research by promoting open science practices. It aims to be more than just a platform: it seeks to be a comprehensive infrastructure that fosters collaboration, open science, and efficient research workflows. This is achieved by providing customizable and readily available VLabs that can be tailored to the specific needs of diverse research communities. In this section, we invite your input on Blue-Cloud’s services, including those offered by existing VLabs.",
     "Extra Section: Blue cloud Services usage": "Usage and Evaluation of specific Services",
     "Section 3: About Blue-Cloud thematic contribution to EOSC": "Blue-Cloud is conceived as a marine thematic service that is contributing to shaping the European Open Science Cloud (EOSC). Likewise, participation in EOSC opens opportunities for the Blue-Cloud community. As a Blue-Cloud stakeholder, what type of value, services and/or type of representation would you be looking for in EOSC? Please rank the following according to your level of interest",
-    "Section 4: About Blue-Cloud evolution as an incubator for the EU DTO": "Please consider the following statements, which tackle aspects related to interoperability between Blue-Cloud and EDITO -the public infrastructure of the European Digital Twin Ocean- and classify them according to their interest to you",
+    "Section 4: About Blue-Cloud evolution as an incubator for the EU DTO": "Please consider the following statements, which tackle aspects related to interoperability between Blue-Cloud and EDITO -the public infrastructure of the European Digital Twin Ocean- and classify them according to their interest to you:",
     "Section 5: About Blue-Cloud as a contributor to the UN Ocean Decade": "", 
 }
