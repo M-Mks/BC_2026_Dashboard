@@ -214,8 +214,8 @@ def create_yes_histogram(df, extra_hist_cols):
     # Update layout with custom legend and other settings
     fig.update_layout(
         title=None,
-        xaxis_title="Counts",
-        yaxis_title="Answers",
+        xaxis_title="User count",
+        yaxis_title="Services",
         legend=dict(
             title="Legend",
             itemsizing="constant",  # Ensures the size remains constant
@@ -229,7 +229,7 @@ def create_yes_histogram(df, extra_hist_cols):
 
     # Title for the graph
     title_html = html.Div(
-        "Number of 'Yes' Responses per Option",
+        "Number of service users per specific service",
         style={
             'textAlign': 'center', 'fontSize': '20px', 'color': '#1f2a44',
             'fontFamily': 'Helvetica, Arial, sans-serif', 'fontWeight': 'normal', 'marginBottom': '2px'
