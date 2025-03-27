@@ -8,6 +8,8 @@ from wordcloud import WordCloud, STOPWORDS
 import io
 import base64
 import matplotlib.pyplot as plt
+from datetime import date
+
 
 # Importing custom layout configurations from layouts.py
 from assets.helper_functions import YesNo_pie_chart, Section_1_pie_chart, create_yes_histogram, Interest_S3_pie_chart, Interest_S4_pie_chart, Agreement_pie_chart, create_pies
@@ -24,8 +26,8 @@ custom_stopwords = set(STOPWORDS).union({})  # Add/remove words as needed "surve
                                                # "user", "s"
 
 respondent_count = df.shape[0]  # Number of rows in the DataFrame
-print(STOPWORDS)
-
+today1 = date.today()
+today = today1.strftime("%d-%m-%Y")  # Format the date as Month Day, Year
 # Initialize the Dash app
 app = Dash(__name__)
 server = app.server
@@ -209,9 +211,12 @@ app.layout = html.Div(
                             section_subtitles.get(section, "Explore this section for detailed insights."),  # Default subtitle if not found
                             style={"textAlign": "center", "fontSize": "20px", "color": "#34495e"}
                         ),
-                        html.Div(
-                            f"Respondent Count: {respondent_count}",
-                            style=COUNTER_STYLE,
+                        html.Div([
+                                f"Respondent Count: {respondent_count}", 
+                                html.Br(), 
+                                f"Latest update: {today}"
+                                ],
+                            style=COUNTER_STYLE
                         ) if section == "Section 1: About the Respondent" else None,
                                                 
                         html.Div(
