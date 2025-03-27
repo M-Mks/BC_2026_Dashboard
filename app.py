@@ -14,13 +14,17 @@ from assets.helper_functions import YesNo_pie_chart, Section_1_pie_chart, create
 from assets.layouts import DIV_STYLE, SECTION_LAYOUT, sections, section_subtitles, COUNTER_STYLE, DIV5_STYLE
 
 # Load the CSV file
-file_path = "stakeholder_consultation_final.csv"  # Update with your CSV file path
+file_path = "stakeholder_consultation.csv"  # Update with your CSV file path
 df = pd.read_csv(file_path, sep=";", encoding="utf-8")
 
 # Define custom words to omit from the word cloud
-custom_stopwords = set(STOPWORDS).union({"survey", "data", "result", "Data", "value", "Lake", "Blue", "Cloud", "EDITO", "user", "s"})  # Add/remove words as needed
-respondent_count = df.shape[0]  # Number of rows in the DataFrame
+custom_stopwords = set(STOPWORDS).union({})  # Add/remove words as needed "survey", 
+                                             #   "data", "result", "Data", "value", 
+                                              #  "Lake", "Blue", "Cloud", "EDITO", 
+                                               # "user", "s"
 
+respondent_count = df.shape[0]  # Number of rows in the DataFrame
+print(STOPWORDS)
 
 # Initialize the Dash app
 app = Dash(__name__)
