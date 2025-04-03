@@ -20,7 +20,7 @@ file_path = "stakeholder_consultation.csv"  # Update with your CSV file path
 df = pd.read_csv(file_path, sep=";", encoding="utf-8")
 
 # Define custom words to omit from the word cloud
-custom_stopwords = set(STOPWORDS).union({"survey", "data", "result", "Data", "value", "Lake", "Blue", "Cloud", "EOSC", "user","EDITO", "EMODnet"})  # Add/remove words as needed , "s"
+custom_stopwords = set(STOPWORDS).union({"survey", "data", "result", "Data", "value", "Lake", "Blue", "Cloud", "EOSC", "user"})  # Add/remove words as needed , "s"
 
 respondent_count = df.shape[0]  # Number of rows in the DataFrame
 today1 = date.today()
