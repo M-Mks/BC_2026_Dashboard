@@ -9,7 +9,8 @@ import io
 import base64
 import matplotlib.pyplot as plt
 from datetime import date
-
+import os
+import datetime
 
 # Importing custom layout configurations from layouts.py
 from assets.helper_functions import YesNo_pie_chart, Section_1_pie_chart, create_yes_histogram, Interest_S3_pie_chart, Interest_S4_pie_chart, Agreement_pie_chart, create_pies
@@ -20,11 +21,15 @@ file_path = "stakeholder_consultation.csv"  # Update with your CSV file path
 df = pd.read_csv(file_path, sep=";", encoding="utf-8")
 
 # Define custom words to omit from the word cloud
-custom_stopwords = set(STOPWORDS).union({"survey", "data", "result", "Data", "value", "Lake", "Blue", "Cloud", "EOSC", "user"})  # Add/remove words as needed , "s"
+custom_stopwords = set(STOPWORDS).union({"survey", "result", "value", "Blue", "Cloud", "EOSC", "user", "Development", "Activities", "EDITO", "Decade", "making", "working", "BC"})  # Add/remove words as needed , "s"
 
 respondent_count = df.shape[0]  # Number of rows in the DataFrame
-today1 = date.today()
-today = today1.strftime("%d-%m-%Y")  # Format the date as Month Day, Year
+mod_time = os.path.getmtime(file_path)
+mod_date = datetime.datetime.fromtimestamp(mod_time)
+Latest_modif = mod_date.strftime("%d-%m-%Y")  # Format the date as Month Day, Year
+
+print(f"Last modified: {Latest_modif}")  # Debugging: check the last modified date
+
 # Initialize the Dash app
 app = Dash(__name__)
 server = app.server
@@ -99,7 +104,7 @@ def generate_wordcloud_for_question(question):
         wordcloud = WordCloud(
             width=800,
             height=400,
-            max_words=50,
+            max_words=70,
             max_font_size=100,
             min_font_size=10,
             stopwords=custom_stopwords,
@@ -211,7 +216,7 @@ app.layout = html.Div(
                         html.Div([
                                 f"Respondent Count: {respondent_count}", 
                                 html.Br(), 
-                                f"Latest update: {today}"
+                                f"Latest update: {Latest_modif}"
                                 ],
                             style=COUNTER_STYLE
                         ) if section == "Section 1: About the Respondent" else None,

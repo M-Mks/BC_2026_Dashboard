@@ -37,11 +37,20 @@ def clean_S42_question_title(question):
     
     return cleaned_S42_question
 
+def clean_S2_question_title(question):
+    # Define the part of the question to remove
+    intro3_text = ("With this in mind, how")
+    
+    # Remove the intro if it exists
+    cleaned_S2_question = question.replace(intro3_text, "How").strip()
+    
+    return cleaned_S2_question
+
 def Section_1_pie_chart(df, question):
 # Define colors: Red-Green for Yes/No, otherwise Sequential Blue
 
-    fig = px.pie(df, names=question, title=f"{question}")
-    fig.update_traces(marker=dict(colors=px.colors.sequential.Blues_r))
+    fig = px.pie(df, names=question, title=f"{question}", color_discrete_sequence=px.colors.sequential.Blues_r)
+    
     fig.update_layout(title = None, legend=dict(
         orientation="v",  # Vertical legend
         x=0.5,           # Position it on the right
@@ -143,7 +152,8 @@ def create_pies(df, question, category_order, color_mapping):
     # Handle missing values by replacing with "No Answer"
     df_cleaned = df.copy()
     df_cleaned[question] = df_cleaned[question].fillna("No Answer")
-
+    cleaned_S2_question = clean_S2_question_title(question)
+    
     # Compute value counts
     vc = df_cleaned[question].value_counts().reset_index()
     category_column, value_column = vc.columns  
@@ -176,7 +186,7 @@ def create_pies(df, question, category_order, color_mapping):
 
     # Create a title for the chart
     title_html = html.Div(
-        f"{question}",
+        f"{cleaned_S2_question}",
         style={
             'textAlign': 'center', 'fontSize': '20px', 'color': '#1f2a44',
             'fontFamily': 'Helvetica, Arial, sans-serif', 'fontWeight': 'normal', 'marginBottom': '2px'
