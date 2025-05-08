@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from datetime import date
 import os
 import datetime
+import json
 
 # Importing custom layout configurations from layouts.py
 from assets.helper_functions import YesNo_pie_chart, Section_1_pie_chart, create_yes_histogram, Interest_S3_pie_chart, Interest_S4_pie_chart, Agreement_pie_chart, create_pies
@@ -28,7 +29,19 @@ mod_time = os.path.getmtime(file_path)
 mod_date = datetime.datetime.fromtimestamp(mod_time)
 Latest_modif = mod_date.strftime("%d-%m-%Y")  # Format the date as Month Day, Year
 
-print(f"Last modified: {Latest_modif}")  # Debugging: check the last modified date
+# Create JSON structure
+mod_info = {
+    "csv_last_modified": Latest_modif
+}
+
+# Save to JSON file
+json_path = "modification_info.json"
+with open(json_path, "w") as f:
+    json.dump(mod_info, f, indent=4)
+
+with open("modification_info.json") as f:
+    mod_info = json.load(f) # Debugging: check the last modified date
+last_update_date = mod_info["csv_last_modified"]
 
 # Initialize the Dash app
 app = Dash(__name__)
@@ -216,7 +229,7 @@ app.layout = html.Div(
                         html.Div([
                                 f"Respondent Count: {respondent_count}", 
                                 html.Br(), 
-                                f"Latest update: {Latest_modif}"
+                                f"Latest update: {last_update_date}"
                                 ],
                             style=COUNTER_STYLE
                         ) if section == "Section 1: About the Respondent" else None,
