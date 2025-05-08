@@ -17,6 +17,11 @@ import json
 from assets.helper_functions import YesNo_pie_chart, Section_1_pie_chart, create_yes_histogram, Interest_S3_pie_chart, Interest_S4_pie_chart, Agreement_pie_chart, create_pies
 from assets.layouts import DIV_STYLE, SECTION_LAYOUT, sections, section_subtitles, COUNTER_STYLE, DIV5_STYLE
 
+########################################################################
+TBR_CUSTOM_MODIF_DATE = "24-04-2025"####################################
+########################################################################
+
+
 # Load the CSV file
 file_path = "stakeholder_consultation.csv"  # Update with your CSV file path
 df = pd.read_csv(file_path, sep=";", encoding="utf-8")
@@ -41,6 +46,7 @@ with open(json_path, "w") as f:
 
 with open("modification_info.json") as f:
     mod_info = json.load(f) # Debugging: check the last modified date
+
 last_update_date = mod_info["csv_last_modified"]
 
 # Initialize the Dash app
@@ -229,7 +235,7 @@ app.layout = html.Div(
                         html.Div([
                                 f"Respondent Count: {respondent_count}", 
                                 html.Br(), 
-                                f"Latest update: {last_update_date}"
+                                f"Latest update: {TBR_CUSTOM_MODIF_DATE}"
                                 ],
                             style=COUNTER_STYLE
                         ) if section == "Section 1: About the Respondent" else None,
