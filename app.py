@@ -18,7 +18,7 @@ from assets.helper_functions import YesNo_pie_chart, Section_1_pie_chart, create
 from assets.layouts import DIV_STYLE, SECTION_LAYOUT, sections, section_subtitles, COUNTER_STYLE, DIV5_STYLE
 
 ########################################################################
-TBR_CUSTOM_MODIF_DATE = "24-04-2025"####################################
+#TBR_CUSTOM_MODIF_DATE = "24-04-2025"####################################
 ########################################################################
 
 
@@ -235,7 +235,7 @@ app.layout = html.Div(
                         html.Div([
                                 f"Respondent Count: {respondent_count}", 
                                 html.Br(), 
-                                f"Latest update: {TBR_CUSTOM_MODIF_DATE}"
+                                f"Latest update: {last_update_date}"
                                 ],
                             style=COUNTER_STYLE
                         ) if section == "Section 1: About the Respondent" else None,
