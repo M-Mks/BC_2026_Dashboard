@@ -6,7 +6,7 @@
         "app_id": "16293050",
         "app_guid": null,
         "title": "BC_2026_Dashboard",
-        "app_mode": "python-shiny",
+        "app_mode": "python-dash",
         "app_store_version": 1
     }
 }
