@@ -51,7 +51,7 @@ last_update_date = mod_info["csv_last_modified"]
 
 # Initialize the Dash app
 dash_app = Dash(__name__)
-server = dash_app.server
+app = dash_app.server
 dash_app.title = "Survey Results Dashboard"
 
 # Graph style definition
