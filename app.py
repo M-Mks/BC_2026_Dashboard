@@ -50,9 +50,9 @@ with open("modification_info.json") as f:
 last_update_date = mod_info["csv_last_modified"]
 
 # Initialize the Dash app
-app = Dash(__name__)
-server = app.server
-app.title = "Survey Results Dashboard"
+dash_app = Dash(__name__)
+server = dash_app.server
+dash_app.title = "Survey Results Dashboard"
 
 # Graph style definition
 wordcloud_cols = list(range(13, 16)) + list(range(67, 71)) + list(range(84, 87)) + [72,80]
@@ -174,7 +174,7 @@ def generate_wordcloud_for_question(question):
         )
     
 
-app.layout = html.Div(
+dash_app.layout = html.Div(
     style={"fontFamily": "Arial, sans-serif", "margin": "24px"},
     children=[
         # Container for the image and title
@@ -251,7 +251,7 @@ app.layout = html.Div(
     ]
 )
 
-@app.callback(
+@dash_app.callback(
     [Output(f"graphs-{section}", "children") for section in sections],
     [Input("tabs", "value")]
 )
@@ -287,4 +287,4 @@ def update_graphs_by_section(selected_section):
     
 # Run the app
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    dash_app.run_server(debug=True)
