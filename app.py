@@ -18,7 +18,7 @@ from assets.helper_functions import YesNo_pie_chart, Section_1_pie_chart, create
 from assets.layouts import DIV_STYLE, SECTION_LAYOUT, sections, section_subtitles, COUNTER_STYLE, DIV5_STYLE
 
 ########################################################################
-#TBR_CUSTOM_MODIF_DATE = "24-04-2025"####################################
+TBR_CUSTOM_MODIF_DATE = "24-06-2025"####################################
 ########################################################################
 
 
@@ -30,6 +30,7 @@ df = pd.read_csv(file_path, sep=";", encoding="utf-8")
 custom_stopwords = set(STOPWORDS).union({"survey", "result", "value", "Blue", "Cloud", "EOSC", "user", "Development", "Activities", "EDITO", "Decade", "making", "working", "BC"})  # Add/remove words as needed , "s"
 
 respondent_count = df.shape[0]  # Number of rows in the DataFrame
+
 mod_time = os.path.getmtime(file_path)
 mod_date = datetime.datetime.fromtimestamp(mod_time)
 Latest_modif = mod_date.strftime("%d-%m-%Y")  # Format the date as Month Day, Year
@@ -48,6 +49,7 @@ with open("modification_info.json") as f:
     mod_info = json.load(f) # Debugging: check the last modified date
 
 last_update_date = mod_info["csv_last_modified"]
+
 
 # Initialize the Dash app
 app = Dash(__name__)
@@ -235,7 +237,7 @@ app.layout = html.Div(
                         html.Div([
                                 f"Respondent Count: {respondent_count}", 
                                 html.Br(), 
-                                f"Latest update: {last_update_date}"
+                                f"Latest update: {TBR_CUSTOM_MODIF_DATE}"
                                 ],
                             style=COUNTER_STYLE
                         ) if section == "Section 1: About the Respondent" else None,
